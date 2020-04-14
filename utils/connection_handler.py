@@ -3,6 +3,7 @@ import json
 
 
 class ConnectionHandler:
+    """Class that manage the connection between client and server"""
     def __init__(self, port=80, host="localhost"):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__port = port
