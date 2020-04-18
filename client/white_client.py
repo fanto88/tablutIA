@@ -3,7 +3,7 @@ import utils.config as config
 
 
 def main():
-    Client(config.WHITE_SERVER_PORT, config.SERVER_IP, "WHITE").run()
+    Client(config.WHITE_SERVER_PORT, config.SERVER_IP, config.WHITE).run()
 
 
 if __name__ == "__main__":

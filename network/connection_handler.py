@@ -9,12 +9,12 @@ class ConnectionHandler:
         self.__port = port
         self.__host = host
 
-    def socket(self, socket=None):
+    def socket(self, sock=None):
         """If called with no parameters return the socket.
             Else assign a new socket to the class."""
-        if socket is None:
+        if sock is None:
             return self.__socket
-        self.__socket = socket
+        self.__socket = sock
         return self
 
     def port(self, port=None):
