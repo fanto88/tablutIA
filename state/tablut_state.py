@@ -8,18 +8,12 @@ from utils.action import Action
 
 # TODO: Pulire il codice e renderlo il più veloce ed ottimizzato possibile
 # TODO: Migliorare il print_bitboard dentro bitboard_util.py
-# TODO: Pensare come fare meglio remove_pawn e add_pawn
 # TODO: La board serve davvero?
-# TODO: Parte da basso destra invece che alto sinistra
-# TODO: Funzione per muovere il re
-# TODO: Funzione per muovere pedine bianche
-# TODO: Funzione per muovere pedine nere
 # TODO: Dove si fa il controllo se mangia qualcosa?
 # TODO: Check della vittoria, sconfitta o pareggio
-# TODO: Fare le funzioni che usino Action instead of Position
-# TODO: Vittoria
 # TODO : come faccio a modificare direttamente self.__white_bitboard??? dentro move
-# TODO: Ogni tanto non trova una mossa da fare, problema dello stato oppure questo funziona?
+# TODO: Ogni tanto non trova una mossa da fare, problema dello stato oppure del random?
+# TODO: Capire perchè ogni volta bisogna instanziare di nuovo le bitboard a vuoto dentro move
 
 
 class TablutState:
@@ -114,6 +108,9 @@ class TablutState:
     def load_state_from_json(self, json_string):
         row_index = 0
         self.__turn = json_string["turn"]
+        self.__white_bitboard = numpy.zeros(shape=9, dtype=int)
+        self.__king_bitboard = numpy.zeros(shape=9, dtype=int)
+        self.__black_bitboard = numpy.zeros(shape=9, dtype=int)
         for row in json_string["board"]:
             column_index = 8
             for column in row:
