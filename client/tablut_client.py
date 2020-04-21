@@ -4,8 +4,6 @@ from network.connection_handler import ConnectionHandler
 import utils.config as config
 
 
-# TODO: Fare il client random per testare lo stato
-
 class Client(ConnectionHandler):
     """Class that define the client logic.
     Extend ConnectionHandler that handles the connection between client and server."""
@@ -42,5 +40,8 @@ class Client(ConnectionHandler):
             if self.__role == self.__state.turn():  # check if our turn or not
                 move = self.__algorithm.get_move(self.__state)  # Algorithm return a move
                 if move is not None:
-                    self.send_string(move)  # send the move to the server
+                    self.__state.move(move) # Execute the move
+                    self.send_string(move.to_server_format())  # send the move to the server
             self.__state.load_state_from_json(self.read_string())  # read the new state
+
+
