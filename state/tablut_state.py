@@ -14,7 +14,7 @@ from utils.action import Action
 # TODO : come faccio a modificare direttamente self.__white_bitboard??? dentro move
 # TODO: Ogni tanto non trova una mossa da fare, problema dello stato oppure del random?
 # TODO: Capire perchè ogni volta bisogna instanziare di nuovo le bitboard a vuoto dentro move
-
+# TODO: Obstacle bitboard inutile?
 
 class TablutState:
     def __init__(self):
@@ -99,6 +99,18 @@ class TablutState:
         self.__king_bitboard = king_bitboard
         return self
 
+    def throne_bitboard(self, throne_bitboard=None):
+        if throne_bitboard is None:
+            return self.__throne_bitboard
+        self.__throne_bitboard = throne_bitboard
+        return self
+
+    def camps_bitboard(self, camps_bitboard=None):
+        if camps_bitboard is None:
+            return self.__camps_bitboard
+        self.__camps_bitboard = camps_bitboard
+        return self
+
     def board(self, board=None):
         if board is None:
             return self.__board
@@ -108,6 +120,8 @@ class TablutState:
     def load_state_from_json(self, json_string):
         row_index = 0
         self.__turn = json_string["turn"]
+        if (self.__turn != config.WHITE) & (self.__turn != config.BLACK):
+            return
         self.__white_bitboard = numpy.zeros(shape=9, dtype=int)
         self.__king_bitboard = numpy.zeros(shape=9, dtype=int)
         self.__black_bitboard = numpy.zeros(shape=9, dtype=int)
@@ -125,7 +139,6 @@ class TablutState:
                     self.__king_bitboard[row_index] |= 1 << column_index
                 column_index -= 1
             row_index += 1
-        self.__obstacle_bitboard = self.__white_bitboard | self.__escape_bitboard | self.__black_bitboard | self.__king_bitboard | self.__throne_bitboard | self.__camps_bitboard
 
     def move(self, action: Action):
         if action.role() == config.WHITE:
@@ -138,8 +151,3 @@ class TablutState:
         else:
             self.__black_bitboard = Bitboard.set(self.__black_bitboard, action.end().row(), action.end().column())
             self.__black_bitboard= Bitboard.unset(self.__black_bitboard, action.start().row(), action.start().column())
-
-        self.__obstacle_bitboard = Bitboard.set(self.__obstacle_bitboard, action.end().row(),
-                                                                 action.end().column())
-        self.__obstacle_bitboard= Bitboard.unset(self.__obstacle_bitboard, action.start().row(),
-                                                                     action.start().column())

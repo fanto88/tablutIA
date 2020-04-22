@@ -4,6 +4,7 @@ from network.connection_handler import ConnectionHandler
 import utils.config as config
 
 
+# TODO: Try e catch intorno al while in caso la partita finisca? Per fare la disconnessione
 class Client(ConnectionHandler):
     """Class that define the client logic.
     Extend ConnectionHandler that handles the connection between client and server."""
@@ -32,16 +33,19 @@ class Client(ConnectionHandler):
 
     def run(self):
         """Implements the logic of the client."""
-        self.connect()  # Connecting to the server
-        self.send_string(self.__player_name)  # Sending the name
-        self.__state.load_state_from_json(self.read_string())  # Read the initial state
-
-        while True:  # Game loop
-            if self.__role == self.__state.turn():  # check if our turn or not
-                move = self.__algorithm.get_move(self.__state)  # Algorithm return a move
-                if move is not None:
-                    self.__state.move(move) # Execute the move
-                    self.send_string(move.to_server_format())  # send the move to the server
-            self.__state.load_state_from_json(self.read_string())  # read the new state
-
-
+        try:
+            self.connect()  # Connecting to the server
+            self.send_string(self.__player_name)  # Sending the name
+            self.__state.load_state_from_json(self.read_string())  # Read the initial state
+            while True:  # Game loop
+                if self.__role == self.__state.turn():  # check if our turn or not
+                    move = self.__algorithm.get_move(self.__state)  # Algorithm return a move
+                    if move is not None:
+                        self.__state.move(move)  # Execute the move
+                        self.send_string(move.to_server_format())  # send the move to the server
+                self.__state.load_state_from_json(self.read_string())  # read the new state
+        except:
+            pass
+        finally:
+            print("Game Terminated - Closing Connection")
+            self.disconnect()

@@ -9,6 +9,11 @@ class Position:
     def column(self):
         return self.__column
 
+    def __eq__(self, other):
+        if self.__row == other.row() & self.__column == other.column():
+            return True
+        return False
+
 
 class Action:
     def __init__(self, start: Position, end: Position, role):
