@@ -5,7 +5,7 @@ import numpy
 from exceptions.custom_exceptions import *
 from state.tablut_state import TablutState
 from utils import config
-from utils.bitboard_util import Bitboard
+import utils.bitboard_util as bitboard_util
 
 
 class Tablut:  # TODO: add other methods, such as expand, actions, ...
@@ -52,7 +52,7 @@ class AshtonTablutRules(Tablut):
 
         # Check if you are moving to an empty space
         # TODO: Non mi viene in mente come gestire i campi se son vuoti. Una seconda bitboard?
-        if Bitboard.get_bit(obstacle_bitboard, action.end().row(), action.end().column()) == 1:
+        if bitboard_util.get_bit(obstacle_bitboard, action.end().row(), action.end().column()) == 1:
             raise OccupitedException(action)
 
         # Check if it's a diagonal move
@@ -64,25 +64,25 @@ class AshtonTablutRules(Tablut):
             min_col = numpy.minimum(action.start().column(), action.end().column())
             max_col = numpy.maximum(action.start().column(), action.end().column())
             while max_col != min_col:
-                if Bitboard.get_bit(obstacle_bitboard, action.start().row(), max_col):
+                if bitboard_util.get_bit(obstacle_bitboard, action.start().row(), max_col):
                     raise ClimbingException(action)
                 max_col -= 1
         else:
             min_row = numpy.minimum(action.start().row(), action.end().row())
             max_row = numpy.maximum(action.start().row(), action.end().row())
             while max_row != min_row:
-                if Bitboard.get_bit(obstacle_bitboard, max_row, action.start().column()):
+                if bitboard_util.get_bit(obstacle_bitboard, max_row, action.start().column()):
                     raise ClimbingException(action)
                 max_row -= 1
 
         # If i'm moving a correct pawn
         if action.role() == config.WHITE:
-            if Bitboard.get_bit(state.white_bitboard() | state.king_bitboard(), action.start().row(), action.start().column()) == 0:
+            if bitboard_util.get_bit(state.white_bitboard() | state.king_bitboard(), action.start().row(), action.start().column()) == 0:
                 raise PawnException(action)
 
         # If i'm moving a correct pawn
         if action.role() == config.BLACK:
-            if Bitboard.get_bit(state.black_bitboard(), action.start().row(), action.start().column()) == 0:
+            if bitboard_util.get_bit(state.black_bitboard(), action.start().row(), action.start().column()) == 0:
                 raise PawnException(action)
 
         return True

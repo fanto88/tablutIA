@@ -2,7 +2,7 @@ import numpy
 
 from state.pawn import Pawn
 from utils import config
-from utils.bitboard_util import Bitboard
+import utils.bitboard_util as bitboard_util
 from utils.action import Action
 
 
@@ -142,12 +142,12 @@ class TablutState:
 
     def move(self, action: Action):
         if action.role() == config.WHITE:
-            if Bitboard.get_bit(self.__white_bitboard, action.start().row(), action.start().column()) == 1:
-                self.__white_bitboard = Bitboard.set(self.__white_bitboard, action.end().row(), action.end().column())
-                self.__white_bitboard = Bitboard.unset(self.__white_bitboard, action.start().row(), action.start().column())
+            if bitboard_util.get_bit(self.__white_bitboard, action.start().row(), action.start().column()) == 1:
+                self.__white_bitboard = bitboard_util.set(self.__white_bitboard, action.end().row(), action.end().column())
+                self.__white_bitboard = bitboard_util.unset(self.__white_bitboard, action.start().row(), action.start().column())
             else:
-                self.__king_bitboard = Bitboard.set(self.__king_bitboard, action.end().row(), action.end().column())
-                self.__king_bitboard = Bitboard.unset(self.__king_bitboard, action.start().row(), action.start().column())
+                self.__king_bitboard = bitboard_util.set(self.__king_bitboard, action.end().row(), action.end().column())
+                self.__king_bitboard = bitboard_util.unset(self.__king_bitboard, action.start().row(), action.start().column())
         else:
-            self.__black_bitboard = Bitboard.set(self.__black_bitboard, action.end().row(), action.end().column())
-            self.__black_bitboard= Bitboard.unset(self.__black_bitboard, action.start().row(), action.start().column())
+            self.__black_bitboard = bitboard_util.set(self.__black_bitboard, action.end().row(), action.end().column())
+            self.__black_bitboard= bitboard_util.unset(self.__black_bitboard, action.start().row(), action.start().column())

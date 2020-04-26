@@ -1,12 +1,12 @@
 from state.tablut_state import TablutState
 from random import randrange, randint
-
 from utils import config
 from utils.action import Position, Action
 from rules.rules import AshtonTablutRules
+import utils.bitboard_util as bitboard_util
 
 # TODO: Ogni tanto entra in un ciclo infinito in cui non trova una mossa da poter fare
-from utils.bitboard_util import Bitboard
+
 
 
 class Algorithm:
@@ -31,7 +31,7 @@ class Algorithm:
                 for column in range(9):
                     if found_action:
                         break
-                    if Bitboard.get_bit(bitboard, row, column) == 1:
+                    if bitboard_util.get_bit(bitboard, row, column) == 1:
                         for i in range(5000):
                             if found_action:
                                 break
