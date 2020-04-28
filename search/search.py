@@ -1,23 +1,25 @@
 import numpy as np
 from search.tree import Node
 from collections.abc import Iterable
+import time
 
 
-# TODO: aggiungi un timer per far finire la ricerca
 class MinMaxAgent:
 
-    def __init__(self, max_depth):
+    def __init__(self, max_depth, max_time):
         self.max_depth = max_depth
         self.node_expanded = 0
+        self.max_time = max_time
 
     def choose_action(self, state, problem):
         self.node_expanded = 0
-        eval_score, selected_action = self._minimax(state, problem, True, float('-inf'), float('inf'))
+        self.timer = time.time()
+        eval_score, selected_action = self._minimax(Node(state), problem, True, float('-inf'), float('inf'))
 
         return selected_action
 
     def _minimax(self, node, problem, max_turn, alpha, beta):
-        if node.depth == self.max_depth or terminal_test(node.state, problem):
+        if node.depth == self.max_depth or terminal_test(node.state, problem) or (time.time() - self.timer) >= self.max_time:
             return utility(node.state, problem), node.action
 
         self.node_expanded += 1
@@ -46,36 +48,25 @@ class MinMaxAgent:
 
         return value, best_action
 
-    def _minimax2(self, node, problem, max_turn, alpha, beta):
-        if node.depth == self.max_depth or terminal_test(node.state, problem):
-            return utility(node.state, problem), node.action
-
-        self.node_expanded += 1
-        value = float('-inf') if max_turn else float('inf')
-        best_action = ''
-
-        list_actions = possible_actions(node.state, problem)
-
-        return tuple(map(lambda action: self._tovectorize_minimax(action, value, best_action, node, problem, max_turn, alpha, beta), list_actions))
-
-    def _tovectorize_minimax(self, action, value, best_action, node, problem, max_turn, alpha, beta):
+    # TODO: scomponi la funzione in _tovectorize_max e "_min
+    def _tovectorize_max(self, action, value, best_action, node, problem, max_turn, alpha, beta):
         new_state = resulting_state(node.state, action, problem)
         new_node = Node(new_state, node, action, node.path_cost + 1)
         child_value, child_action = self._minimax2(new_node, problem, not max_turn, alpha, beta)
         #child_value = max(child_value) if isinstance(child_value, Iterable) else child_value  # TODO: Vedi assolutamente come fare
         print(node, child_value, child_action)
-        if max_turn and value < child_value:
-            value = child_value
-            best_action = action
-            local_alpha = max(alpha, value)
-            if beta <= local_alpha:
+        if max_turn and value[0] < child_value[0]:
+            value[0] = child_value[0]
+            best_action[0] = action[0]
+            alpha = [max(alpha, value)]
+            if beta[0] <= alpha[0]:
                 return (float('-inf'), None) if max_turn else (float('inf'), None)
 
-        elif (not max_turn) and value > child_value:
-            value = child_value
-            best_action = action
-            local_beta = min(beta, value)
-            if local_beta <= alpha:
+        elif (not max_turn) and value[0] > child_value[0]:
+            value[0] = child_value[0]
+            best_action[0] = action[0]
+            beta = min(beta, value)
+            if beta[0] <= alpha[0]:
                 return (float('-inf'), None) if max_turn else (float('inf'), None)
         return value, best_action
 
@@ -95,3 +86,35 @@ def utility(state, problem):  # TODO: vedi come implementare
 
 def terminal_test(state, problem):  #TODO: vedi come implementare
     problem.goal_test(state)
+
+
+from multiprocessing import (Process, set_start_method)
+
+
+class ParallelMinMax(MinMaxAgent):
+
+    def __init__(self, process_no, max_depth, max_time):
+        super().__init__(max_depth, max_time)
+        self.process_no = process_no
+        set_start_method('fork')
+
+    def choose_action(self, state, problem):
+        self.node_expanded = 0
+        self.timer = time.time()
+        processes = []
+
+        list_actions = possible_actions(state, problem)
+        cut = int(len(list_actions)/self.process_no)
+        for i in range(self.process_no):
+            print(list_actions[i*cut:(i+1)*cut])
+            processes.append(
+                Process(target=map, args=(lambda action: self._minimax(Node(resulting_state(state, action)), problem, True, float('-inf'), float('inf')), list_actions[i*cut:(i+1)*cut])))
+            processes[i].start()
+
+        for i in range(self.process_no):
+            processes[i].join()
+
+    def _minimax(self, result, node, problem, max_turn, alpha, beta,):
+        value, best_action = super()._minimax(node, problem, max_turn, alpha, beta)
+        result.append((value, best_action))
+        return value, best_action
