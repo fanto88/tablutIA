@@ -88,7 +88,7 @@ def terminal_test(state, problem):  #TODO: vedi come implementare
     problem.goal_test(state)
 
 
-from multiprocessing import (Process, set_start_method)
+from multiprocessing import (Process, get_context, Manager, Array)
 
 
 class ParallelMinMax(MinMaxAgent):
@@ -96,25 +96,38 @@ class ParallelMinMax(MinMaxAgent):
     def __init__(self, process_no, max_depth, max_time):
         super().__init__(max_depth, max_time)
         self.process_no = process_no
-        set_start_method('fork')
+        #set_start_method('fork')
 
     def choose_action(self, state, problem):
         self.node_expanded = 0
         self.timer = time.time()
         processes = []
+        out = Array(ctypes.Any, 1)
 
         list_actions = possible_actions(state, problem)
         cut = int(len(list_actions)/self.process_no)
+        list_actions_sliced = [list_actions[i*cut:(i+1)*cut] for i in range(self.process_no)]
+
         for i in range(self.process_no):
-            print(list_actions[i*cut:(i+1)*cut])
             processes.append(
-                Process(target=map, args=(lambda action: self._minimax(Node(resulting_state(state, action)), problem, True, float('-inf'), float('inf')), list_actions[i*cut:(i+1)*cut])))
+                Process(target=top_level, args=(self, out, state, problem, True, float('-inf'), float('inf'), list_actions_sliced[i])))
+            #node, problem, max_turn, alpha, beta
             processes[i].start()
 
         for i in range(self.process_no):
             processes[i].join()
 
-    def _minimax(self, result, node, problem, max_turn, alpha, beta,):
+        print("risultato", out)
+
+    def _minimax8(self, result, node, problem, max_turn, alpha, beta):
         value, best_action = super()._minimax(node, problem, max_turn, alpha, beta)
-        result.append((value, best_action))
+        result[0].append((value, best_action))
+        print(value, best_action)
+        print(result)
         return value, best_action
+
+
+def top_level(agent, out, state, problem, max_turn, alpha, beta, actions):
+    for action in actions:
+        agent._minimax8(out, Node(state, action=action), problem, max_turn, alpha, beta)
+    #return map(lambda action:agent._minimax8(out, Node(state, problem, action), problem, max_turn, alpha, beta), actions)
