@@ -96,13 +96,13 @@ class ParallelMinMax(MinMaxAgent):
     def __init__(self, process_no, max_depth, max_time):
         super().__init__(max_depth, max_time)
         self.process_no = process_no
-        #set_start_method('fork')
+        self.jobs = []
+
 
     def choose_action(self, state, problem):
         self.node_expanded = 0
         self.timer = time.time()
         processes = []
-        out = Array(ctypes.Any, 1)
 
         list_actions = possible_actions(state, problem)
         cut = int(len(list_actions)/self.process_no)
