@@ -39,3 +39,4 @@ class Action:
             'from': str(row_letter_start) + str(column_number_start),
             'to': str(row_letter_end) + str(column_number_end)
         }
+

@@ -1,10 +1,14 @@
-from client.algorithm import Algorithm
-from state.tablut_state import TablutState
-from network.connection_handler import ConnectionHandler
+import time
+
+import numpy
+
 import utils.config as config
+from client.algorithm import Algorithm
+from network.connection_handler import ConnectionHandler
+from state.tablut_state import TablutState
+from utils import bitboard_util
 
 
-# TODO: Try e catch intorno al while in caso la partita finisca? Per fare la disconnessione
 class Client(ConnectionHandler):
     """Class that define the client logic.
     Extend ConnectionHandler that handles the connection between client and server."""
@@ -38,6 +42,12 @@ class Client(ConnectionHandler):
             self.send_string(self.__player_name)  # Sending the name
             self.__state.load_state_from_json(self.read_string())  # Read the initial state
             while True:  # Game loop
+                all_moves = self.__state.all_available_moves(self.__state, self.__state.turn())
+                for action in all_moves:
+                    print(action.to_server_format())
+                print("Mosse giocatore: ", self.__state.turn())
+                print("------------------------------------------------------------------")
+                time.sleep(1)
                 if self.__role == self.__state.turn():  # check if our turn or not
                     move = self.__algorithm.get_move(self.__state)  # Algorithm return a move
                     if move is not None:

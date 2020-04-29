@@ -1,13 +1,11 @@
 import numpy
-
 from state.pawn import Pawn
 from utils import config
 import utils.bitboard_util as bitboard_util
-from utils.action import Action
+from utils.action import Action, Position
 
 
-# TODO: Pulire il codice e renderlo il più veloce ed ottimizzato possibile
-# TODO: Migliorare il print_bitboard dentro bitboard_util.py
+# TODO: Pulire il codice e renderlo il più veloce ed ottimizzato possibile. Togliere tutti i for per esempio
 # TODO: La board serve davvero?
 # TODO: Dove si fa il controllo se mangia qualcosa?
 # TODO: Check della vittoria, sconfitta o pareggio
@@ -15,6 +13,8 @@ from utils.action import Action
 # TODO: Ogni tanto non trova una mossa da fare, problema dello stato oppure del random?
 # TODO: Capire perchè ogni volta bisogna instanziare di nuovo le bitboard a vuoto dentro move
 # TODO: Obstacle bitboard inutile?
+# TODO: Funzione che hasha lo stato
+# TODO: Generare tutte le mosse per il nero anche 
 
 class TablutState:
     def __init__(self):
@@ -139,6 +139,67 @@ class TablutState:
                     self.__king_bitboard[row_index] |= 1 << column_index
                 column_index -= 1
             row_index += 1
+        return self
+
+    def get_available_moves_for_pawn(self, position, obstacle_bitboard, color):
+        row_index = position.row()
+        column_index = position.column()
+        all_available_moves_for_pawn = []
+        for row in range(row_index - 1, -1, -1):
+            if bitboard_util.get_bit(obstacle_bitboard, row, column_index) != 1:
+                action = Action(Position(row_index, column_index), Position(row, column_index), color)
+                all_available_moves_for_pawn.append(action)
+            else:
+                break
+        for col in range(column_index - 1, -1, -1):
+            if bitboard_util.get_bit(obstacle_bitboard, row_index, col) != 1:
+                action = Action(Position(row_index, column_index), Position(row_index, col), color)
+                all_available_moves_for_pawn.append(action)
+            else:
+                break
+        for row in range(row_index + 1, 9):
+            if bitboard_util.get_bit(obstacle_bitboard, row, column_index) != 1:
+                action = Action(Position(row_index, column_index), Position(row, column_index), color)
+                all_available_moves_for_pawn.append(action)
+            else:
+                break
+        for col in range(column_index + 1, 9):
+            if bitboard_util.get_bit(obstacle_bitboard, row_index, col) != 1:
+                action = Action(Position(row_index, column_index), Position(row_index, col), color)
+                all_available_moves_for_pawn.append(action)
+            else:
+                break
+        return all_available_moves_for_pawn
+
+    def all_available_moves(self, state, color):
+        all_available_moves = []
+
+        if color == config.WHITE:
+            obstacle_bitboard = state.black_bitboard() | state.white_bitboard() | state.king_bitboard() | state.throne_bitboard() | state.camps_bitboard()
+            for row_index in range(0, 9):
+                for column_index in range(0, 9):
+                    if bitboard_util.get_bit((state.white_bitboard() | state.king_bitboard()), row_index, column_index) == 1:
+                        all_available_moves += self.get_available_moves_for_pawn(Position(row_index, column_index), obstacle_bitboard, config.WHITE)
+        else:
+            obstacle_bitboard = state.black_bitboard() | state.white_bitboard() | state.king_bitboard() | state.throne_bitboard()
+            for row_index in range(0, 9):
+                for column_index in range(0, 9):
+                    if bitboard_util.get_bit(state.black_bitboard(), row_index, column_index):
+                        new_obstacle_bitboard = obstacle_bitboard.copy()
+                        if (row_index == 8 or row_index == 0) & (column_index == 3 or column_index == 5):
+                            row = 8 - row_index
+                            new_obstacle_bitboard = bitboard_util.set(new_obstacle_bitboard, row, column_index)
+
+                        elif (row_index == 3 or row_index == 5) & (column_index == 3 or column_index == 8):
+                            column = 8 - column_index
+                            new_obstacle_bitboard = bitboard_util.set(new_obstacle_bitboard, row_index, column)
+
+                        else:
+                            new_obstacle_bitboard |= state.camps_bitboard()
+                        all_available_moves += self.get_available_moves_for_pawn(Position(row_index, column_index),
+                                                                                 new_obstacle_bitboard, config.BLACK)
+
+        return all_available_moves
 
     def move(self, action: Action):
         if action.role() == config.WHITE:
@@ -151,3 +212,5 @@ class TablutState:
         else:
             self.__black_bitboard = bitboard_util.set(self.__black_bitboard, action.end().row(), action.end().column())
             self.__black_bitboard= bitboard_util.unset(self.__black_bitboard, action.start().row(), action.start().column())
+        return self
+

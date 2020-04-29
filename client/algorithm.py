@@ -8,7 +8,6 @@ import utils.bitboard_util as bitboard_util
 # TODO: Ogni tanto entra in un ciclo infinito in cui non trova una mossa da poter fare
 
 
-
 class Algorithm:
     def __init__(self, role):
         self.__role = role
@@ -18,31 +17,22 @@ class Algorithm:
         found_action = False
         rules = AshtonTablutRules(state)
         action = ""
-        bitboard = ""
+        bitboard = state.black_bitboard()
         if self.__role == config.WHITE:
             bitboard = state.white_bitboard() | state.king_bitboard()
-        else:
-            bitboard = state.black_bitboard()
 
         while not found_action:
-            for row in range(9):
-                if found_action:
-                    break
-                for column in range(9):
-                    if found_action:
-                        break
-                    if bitboard_util.get_bit(bitboard, row, column) == 1:
-                        for i in range(5000):
-                            if found_action:
-                                break
-                            row_to = randint(0, 9)
-                            col_to = randint(0, 9)
-                            position_start = Position(row, column)
-                            position_end = Position(row_to, col_to)
-                            action = Action(position_start, position_end, self.__role)
-                            try:
-                                rules.check_move(state, action)
-                                found_action = True
-                            except:
-                                pass
+            row_from = randint(0, 8)
+            col_from = randint(0, 8)
+            if bitboard_util.get_bit(bitboard, row_from, col_from) == 1:
+                row_to = randint(0, 8)
+                col_to = randint(0, 8)
+                position_start = Position(row_from, col_from)
+                position_end = Position(row_to, col_to)
+                action = Action(position_start, position_end, self.__role)
+                try:
+                    if rules.check_move(state, action):
+                        found_action = True
+                except:
+                    pass
         return action
