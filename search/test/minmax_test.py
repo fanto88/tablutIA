@@ -1,9 +1,10 @@
-from search import search as s
+from search import parallel_search as s
 import time
+
 
 class Problem:
     def actions(self, state):   # TODO: implement
-        return [x for x in range(1, 3)]
+        return [x for x in range(1, 20)]
 
     def goal_test(self, state):  # TODO: implement
         return False
@@ -16,8 +17,8 @@ class Problem:
 
 
 if __name__ == '__main__':
-    search = s.ParallelMinMax(2, 3, 20)
-    action = search.choose_action(8, Problem())
+    search = s.ParallelMinMax(4, 3, 20)
+    action = search.make_decision(8, Problem())
     nodes_expanded = search.node_expanded
-    print(action)
-    print(nodes_expanded)
+    #print(action)
+    #print(nodes_expanded)

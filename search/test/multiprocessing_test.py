@@ -1,5 +1,6 @@
 import multiprocessing as mp
 
+
 class Somma:
 
     def do_somma(self, a, b, out):
@@ -11,6 +12,7 @@ class Somma:
         p = mp.Process(target=self.do_somma, args=(1, 2, out))
         p.start()
         p.join()
+
 
 if __name__ == '__main__':
     o = Somma()
