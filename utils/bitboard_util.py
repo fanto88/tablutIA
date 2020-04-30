@@ -1,3 +1,6 @@
+# TODO: Migliorare il print_bitboard dentro bitboard_util.py
+
+
 def get_bit(bitboard, row, column):
     bits = bitboard[row]
     """Get the value of the index-th bit of the sequence."""
