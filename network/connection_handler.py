@@ -1,44 +1,21 @@
-import socket
 import json
+import socket
 
 
 class ConnectionHandler:
     """Class that manage the connection between client and server"""
+
     def __init__(self, port=80, host="localhost"):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__port = port
         self.__host = host
-
-    def socket(self, sock=None):
-        """If called with no parameters return the socket.
-            Else assign a new socket to the class."""
-        if sock is None:
-            return self.__socket
-        self.__socket = sock
-        return self
-
-    def port(self, port=None):
-        """If called with no parameters return the port.
-            Else assign a new port to the class."""
-        if port is None:
-            return self.__port
-        self.__port = port
-        return self
-
-    def host(self, host=None):
-        """If called with no parameters return the host.
-            Else assign a new host to the class."""
-        if host is None:
-            return self.__host
-        self.__host = host
-        return self
 
     def connect(self):
         """Connect to the server. Throws Exception in case of error"""
         try:
             self.__socket.connect((self.__host, self.__port))
             return self
-        except Exception as exception:
+        except socket.error as exception:
             print("Can't connect to localhost %s at port %d. Exception is %s" % (self.__host, self.__port, exception))
 
     def disconnect(self):
