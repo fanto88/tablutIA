@@ -4,7 +4,7 @@ import time
 
 class Problem:
     def actions(self, state):   # TODO: implement
-        return [x for x in range(1, 20)]
+        return [x for x in range(1, 18)]
 
     def goal_test(self, state):  # TODO: implement
         return False
@@ -17,7 +17,7 @@ class Problem:
 
 
 if __name__ == '__main__':
-    search = s.ParallelMinMax(4, 3, 20)
+    search = s.ParallelMinMax(4, 20, 20)
     action = search.make_decision(8, Problem())
     nodes_expanded = search.node_expanded
     #print(action)

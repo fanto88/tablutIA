@@ -1,7 +1,7 @@
 import numpy as np
 from search.tree import Node
-from collections.abc import Iterable
 import time
+import os
 
 
 class MinMaxAgent:
@@ -10,17 +10,52 @@ class MinMaxAgent:
         self.max_depth = max_depth
         self.node_expanded = 0
         self.max_time = max_time
+        self.checked = dict()
+        self.node_skipped = 0
+        self.timer = 0.0
 
     def choose_action(self, state, problem):
         self.node_expanded = 0
+        self.node_skipped = 0
         self.timer = time.time()
-        eval_score, selected_action = self._minimax(Node(state), problem, True, float('-inf'), float('inf'))
 
+        eval_score, selected_action = self._minimax(Node(state), problem, True, float('-inf'), float('inf'))
+        print("<PID {}> nodi saltati {}".format(os.getpid(), self.node_skipped))
         return selected_action, eval_score
 
+    def _already_checked(self, state):
+        return state in self.checked
+
+    def _already_checked_result(self, state):
+        return self.checked[state]
+
+    def _mark_checked(self, state, values):
+        self.checked[state] = values    # values = (value of single state, action)
+        print(os.getpid(), "stato {} elaborato".format(state))
+
+    # TODO: si può provare a ottimizzare l'algoritmo e non restituire per ogni stato (valore, azione) ma solo valore /
+        # alla fine (valore, azione) è contenuto nel dict checked
+    # TODO: se fai quanto detto sopra, potresti togliere i nodi
     def _minimax(self, node, problem, max_turn, alpha, beta):
-        if node.depth == self.max_depth or terminal_test(node.state, problem) or (time.time() - self.timer) >= self.max_time:
-            return utility(node.state, problem), node.action
+
+        # Controlla se lo stato corrente è già stato elaborato
+        """if self._already_checked(node.state):
+            print(os.getpid(),"Stato", node.state," già elaborato")
+            self.node_skipped += 1
+            return (float('-inf'), None) if max_turn else (float('inf'), None)
+        else:
+            self._mark_checked(node.state, (None, None))"""
+
+        # Ricerca termina se:
+        #   -E' uno stato terminale
+        #   -Il tempo è scaduto
+        #   -Non voglio più espandere l'albero
+        if node.depth == self.max_depth \
+                or terminal_test(node.state, problem) \
+                or (time.time() - self.timer) >= self.max_time:
+            values = utility(node.state, problem), node.action
+            self._mark_checked(node.state, values)
+            return values
 
         self.node_expanded += 1
         value = float('-inf') if max_turn else float('inf')
@@ -46,28 +81,7 @@ class MinMaxAgent:
                 if beta <= alpha:
                     break
 
-        return value, best_action
-
-    # TODO: scomponi la funzione in _tovectorize_max e "_min
-    def _tovectorize_max(self, action, value, best_action, node, problem, max_turn, alpha, beta):
-        new_state = resulting_state(node.state, action, problem)
-        new_node = Node(new_state, node, action, node.path_cost + 1)
-        child_value, child_action = self._minimax2(new_node, problem, not max_turn, alpha, beta)
-        #child_value = max(child_value) if isinstance(child_value, Iterable) else child_value  # TODO: Vedi assolutamente come fare
-        print(node, child_value, child_action)
-        if max_turn and value[0] < child_value[0]:
-            value[0] = child_value[0]
-            best_action[0] = action[0]
-            alpha = [max(alpha, value)]
-            if beta[0] <= alpha[0]:
-                return (float('-inf'), None) if max_turn else (float('inf'), None)
-
-        elif (not max_turn) and value[0] > child_value[0]:
-            value[0] = child_value[0]
-            best_action[0] = action[0]
-            beta = min(beta, value)
-            if beta[0] <= alpha[0]:
-                return (float('-inf'), None) if max_turn else (float('inf'), None)
+        self._mark_checked(node.state, best_action)
         return value, best_action
 
 
