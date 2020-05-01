@@ -36,7 +36,7 @@ class AshtonTablutRules(Tablut):
     """
 
     def check_move(self, state: TablutState, action: Action):
-        obstacle_bitboard = state.black_bitboard() | state.white_bitboard() | state.king_bitboard() | state.throne_bitboard()
+        obstacle_bitboard = state.black_bitboard | state.white_bitboard | state.king_bitboard | state.throne_bitboard
 
         """
         Check the correctness of the action, raising an error it is not allowed in the given state
@@ -57,13 +57,13 @@ class AshtonTablutRules(Tablut):
         # 1) We see if we are moving a pawn from the camps
         # 2) We see if the destination is a camps
         # 3) 
-        if bitboard_util.get_bit(state.camps_bitboard(), action.start().row(), action.start().column()):
-            if bitboard_util.get_bit(state.camps_bitboard(), action.end().row(), action.end().column()):
+        if bitboard_util.get_bit(state.camps_bitboard, action.start().row(), action.start().column()):
+            if bitboard_util.get_bit(state.camps_bitboard, action.end().row(), action.end().column()):
                 if (numpy.absolute(action.start().row() - action.end().row() > 2)) | (
                 numpy.absolute(action.start().column() - action.end().column() > 2)):
                     raise CitadelException(action)
         else:
-            obstacle_bitboard = obstacle_bitboard | state.camps_bitboard()
+            obstacle_bitboard = obstacle_bitboard | state.camps_bitboard
 
         # Check if you are moving to an empty space
         if bitboard_util.get_bit(obstacle_bitboard, action.end().row(), action.end().column()) == 1:
@@ -91,13 +91,13 @@ class AshtonTablutRules(Tablut):
 
         # If i'm moving a correct pawn
         if action.role() == config.WHITE:
-            if bitboard_util.get_bit(state.white_bitboard() | state.king_bitboard(), action.start().row(),
+            if bitboard_util.get_bit(state.white_bitboard | state.king_bitboard, action.start().row(),
                                      action.start().column()) == 0:
                 raise PawnException(action)
 
         # If i'm moving a correct pawn
         if action.role() == config.BLACK:
-            if bitboard_util.get_bit(state.black_bitboard(), action.start().row(), action.start().column()) == 0:
+            if bitboard_util.get_bit(state.black_bitboard, action.start().row(), action.start().column()) == 0:
                 raise PawnException(action)
         return True
 

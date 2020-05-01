@@ -17,10 +17,9 @@ class Algorithm:
         found_action = False
         rules = AshtonTablutRules(state)
         action = ""
-        bitboard = state.black_bitboard()
+        bitboard = state.black_bitboard
         if self.__role == config.WHITE:
-            bitboard = state.white_bitboard() | state.king_bitboard()
-
+            bitboard = state.white_bitboard | state.king_bitboard
         while not found_action:
             row_from = randint(0, 8)
             col_from = randint(0, 8)
