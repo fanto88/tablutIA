@@ -1,4 +1,6 @@
 from logging import Logger
+import utils.action_factory as action_factory
+from utils import config
 
 
 class Game:
@@ -28,7 +30,7 @@ class Game:
         """Return True if the state is a goal"""
         raise NotImplementedError()
 
-    def value(self, state):  # TODO: per me sarebbe l'euristica, ma non sono sicuro
+    def value(self, state, player):
         """
         Each state has a value. Some algorithms try to maximize this value
         """
@@ -47,19 +49,26 @@ class TablutProblem(Game):
     """
 
     def actions(self, state):   # TODO: implement
-        pass
+        return action_factory.all_available_actions(state)
 
     def goal_test(self, state):  # TODO: implement
-        pass
+        return state.check_ended()
 
-    def value(self, state):  # TODO: implement
-        pass
+    def value(self, state, player):  # TODO: implement
+        winner = state.winner
+        if not winner:
+            return 0
+
+        elif winner == player:
+            return 1
+        else:
+            return -1
 
     def process_action(self, state, action):
-        pass
+        return state.load_state_from_action(state, action)
 
     def turn_player(self, state):
-        pass
+        return state.turn
 
     def all_players(self):
-        pass
+        return [config.WHITE, config.BLACK]

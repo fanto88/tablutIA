@@ -2,6 +2,7 @@ import numpy as np
 from search.tree import Node
 import time
 import os
+from search.heuristic.strategies import random
 
 
 class MinMaxAgent:
@@ -13,6 +14,9 @@ class MinMaxAgent:
         self.checked = dict()
         self.node_skipped = 0
         self.timer = 0.0
+
+        # TODO: DA ELIMINARE ASSOLUTAMENTE
+        self.h = random.HeuristicStrategy()
 
     def choose_action(self, state, problem):
         self.node_expanded = 0
@@ -51,9 +55,9 @@ class MinMaxAgent:
         #   -Il tempo è scaduto
         #   -Non voglio più espandere l'albero
         if node.depth == self.max_depth \
-                or terminal_test(node.state, problem) \
+                or self.terminal_test(node.state, problem) \
                 or (time.time() - self.timer) >= self.max_time:
-            values = utility(node.state, problem), node.action
+            values = self.utility(node.state, problem), node.action
             self._mark_checked(node.state, values)
             return values
 
@@ -61,9 +65,9 @@ class MinMaxAgent:
         value = float('-inf') if max_turn else float('inf')
         best_action = ''
 
-        list_actions = possible_actions(node.state, problem)
+        list_actions = self.possible_actions(node.state, problem)
         for action in list_actions:  # TODO: vettorizza il codice
-            new_state = resulting_state(node.state, action, problem)
+            new_state = self.resulting_state(node.state, action, problem)
             new_node = Node(new_state, node, action, node.path_cost+1)
             child_value, child_action = self._minimax(new_node, problem, not max_turn, alpha, beta)
 
@@ -84,19 +88,16 @@ class MinMaxAgent:
         self._mark_checked(node.state, best_action)
         return value, best_action
 
+    # Utils
+    def possible_actions(self, state, problem):   # TODO: vedi come implementare
+        return problem.actions(state)
 
-# Utils
-def possible_actions(state, problem):   # TODO: vedi come implementare
-    return problem.actions(state)
+    def resulting_state(self, state, action, problem):
+        return problem.process_action(state, action)
 
+    # TODO: vedi come implementare
+    def utility(self, state, problem):
+        return problem.value(state) if problem.goal_test(state) else self.h.eval(state, problem.turn_player(state))
 
-def resulting_state(state, action, problem):
-    return problem.process_action(state, action)
-
-
-def utility(state, problem):  # TODO: vedi come implementare
-    return problem.value(state)
-
-
-def terminal_test(state, problem):  #TODO: vedi come implementare
-    problem.goal_test(state)
+    def terminal_test(state, problem):  #TODO: vedi come implementare
+        return problem.goal_test(state)

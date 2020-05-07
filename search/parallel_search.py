@@ -48,6 +48,7 @@ class ParallelMinMax(MinMaxAgent):
                                   list(zip(first_level_states, list_actions))))[0][1]
         return best_action
 
+    # Every process will execute this method
     def _worker(self, states, problem, out):
         best_actions = [self.choose_action(state, problem) for state in states]
 
@@ -59,7 +60,6 @@ class ParallelMinMax(MinMaxAgent):
         out += partial_result
         print("<PID {}> Stati: {}, Risultati (stato, valore): {} Stati saltati: {}".format(
             os.getpid(), states, partial_result, self.node_skipped))
-
 
 
 # Util
