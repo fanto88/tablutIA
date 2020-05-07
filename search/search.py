@@ -97,7 +97,7 @@ class MinMaxAgent:
 
     # TODO: modifica l'euristica che viene utilizzata
     def utility(self, state, problem):
-        return problem.value(state) if problem.goal_test(state) else self.h.eval(state, problem.turn_player(state))
+        return problem.value(state, state.turn) if problem.goal_test(state) else self.h.eval(state, problem.turn_player(state))
 
     def terminal_test(self, state, problem):  #TODO: vedi come implementare
         return problem.goal_test(state)

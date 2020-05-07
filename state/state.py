@@ -12,6 +12,7 @@ class State:
         self.camps_bitboard = numpy.empty(shape=9, dtype=int)
         self.throne_bitboard = numpy.empty(shape=9, dtype=int)
         self.turn = color
+        self.winner = ""
 
         # Initialize Escape Bitboard
         self.escape_bitboard[0] = 0b011000110
