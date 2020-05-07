@@ -44,6 +44,11 @@ class ParallelMinMax(MinMaxAgent):
         [p.join() for p in self.jobs]
 
         self._result.sort(key=operator.itemgetter(1))
+        print("----------------------------------")
+        print(list(filter(lambda x: x[0] == self._result[0][0],
+                                  list(zip(first_level_states, list_actions)))))
+        print(len(first_level_states))
+        print(len(list_actions))
         best_action = list(filter(lambda x: x[0] == self._result[0][0],
                                   list(zip(first_level_states, list_actions))))[0][1]
         return best_action
