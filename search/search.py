@@ -89,13 +89,13 @@ class MinMaxAgent:
         return value, best_action
 
     # Utils
-    def possible_actions(self, state, problem):   # TODO: vedi come implementare
+    def possible_actions(self, state, problem):
         return problem.actions(state)
 
     def resulting_state(self, state, action, problem):
         return problem.process_action(state, action)
 
-    # TODO: vedi come implementare
+    # TODO: modifica l'euristica che viene utilizzata
     def utility(self, state, problem):
         return problem.value(state) if problem.goal_test(state) else self.h.eval(state, problem.turn_player(state))
 

@@ -1,4 +1,3 @@
-from logging import Logger
 import utils.action_factory as action_factory
 from utils import config
 
