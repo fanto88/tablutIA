@@ -15,6 +15,9 @@ class Problem:
     def process_action(self, state, action):
         return state - action
 
+    def turn_player(self, state):
+        return 0
+
 
 if __name__ == '__main__':
     search = s.ParallelMinMax(2, 3, 20)

@@ -16,7 +16,7 @@ class MinMaxAgent:
         self.timer = 0.0
 
         # TODO: DA ELIMINARE ASSOLUTAMENTE
-        self.h = random.HeuristicStrategy()
+        self.h = random.RandomStrategy()
 
     def choose_action(self, state, problem):
         self.node_expanded = 0

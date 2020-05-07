@@ -1,6 +1,6 @@
 import importlib
 from multiprocessing import (Process, Manager)
-from search.search import (MinMaxAgent, possible_actions, resulting_state)
+from search.search import MinMaxAgent
 
 import os
 import operator
@@ -21,8 +21,8 @@ class ParallelMinMax(MinMaxAgent):
     def make_decision(self, state, problem):
         self.node_expanded = 0
 
-        list_actions = possible_actions(state, problem)
-        first_level_states = list(map(lambda action: resulting_state(state, action, problem), list_actions))
+        list_actions = self.possible_actions(state, problem)
+        first_level_states = list(map(lambda action: self.resulting_state(state, action, problem), list_actions))
         num_states = len(first_level_states)
 
         # couples
