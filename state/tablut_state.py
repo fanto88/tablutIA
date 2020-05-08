@@ -75,12 +75,12 @@ class TablutState(State):
 
     def __hash__(self):
         return hash((
-            self.white_bitboard,
-            self.king_bitboard,
-            self.black_bitboard,
-            self.escape_bitboard,
-            self.camps_bitboard,
-            self.throne_bitboard,
+            tuple(self.white_bitboard),
+            tuple(self.king_bitboard),
+            tuple(self.black_bitboard),
+            tuple(self.escape_bitboard),
+            tuple(self.camps_bitboard),
+            tuple(self.throne_bitboard),
             self.turn,
             self.winner
         ))
@@ -89,3 +89,6 @@ class TablutState(State):
         if hash(self) == hash(other):
             return True
         return False
+
+    def __repr__(self):
+        return "HASH: {:d}".format(hash(self))
