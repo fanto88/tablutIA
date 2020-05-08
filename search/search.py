@@ -18,13 +18,12 @@ class MinMaxAgent:
         # TODO: DA ELIMINARE ASSOLUTAMENTE
         self.h = random.RandomStrategy()
 
-    def choose_action(self, state, problem):
+    def choose_action(self, state, problem, maximize=True):
         self.node_expanded = 0
         self.node_skipped = 0
         self.timer = time.time()
 
-        eval_score, selected_action = self._minimax(Node(state), problem, True, float('-inf'), float('inf'))
-        print("<PID {}> nodi saltati {}".format(os.getpid(), self.node_skipped))
+        eval_score, selected_action = self._minimax(Node(state), problem, maximize, float('-inf'), float('inf'))
         return selected_action, eval_score
 
     def _already_checked(self, state):
@@ -35,7 +34,6 @@ class MinMaxAgent:
 
     def _mark_checked(self, state, values):
         self.checked[state] = values    # values = (value of single state, action)
-        print(os.getpid(), "stato {} elaborato".format(state))
 
     # TODO: si può provare a ottimizzare l'algoritmo e non restituire per ogni stato (valore, azione) ma solo valore /
         # alla fine (valore, azione) è contenuto nel dict checked
@@ -57,8 +55,11 @@ class MinMaxAgent:
         if node.depth == self.max_depth \
                 or self.terminal_test(node.state, problem) \
                 or (time.time() - self.timer) >= self.max_time:
+
             values = self.utility(node.state, problem), node.action
-            self._mark_checked(node.state, values)
+            print("<PID {}>: values: {}".format(os.getpid(), values))
+
+            #self._mark_checked(node.state, values)
             return values
 
         self.node_expanded += 1
@@ -70,7 +71,6 @@ class MinMaxAgent:
             new_state = self.resulting_state(node.state, action, problem)
             new_node = Node(new_state, node, action, node.path_cost+1)
             child_value, child_action = self._minimax(new_node, problem, not max_turn, alpha, beta)
-
             if max_turn and value < child_value:
                 value = child_value
                 best_action = action
@@ -85,7 +85,7 @@ class MinMaxAgent:
                 if beta <= alpha:
                     break
 
-        self._mark_checked(node.state, best_action)
+        #self._mark_checked(node.state, value)
         return value, best_action
 
     # Utils
@@ -99,5 +99,5 @@ class MinMaxAgent:
     def utility(self, state, problem):
         return problem.value(state, state.turn) if problem.goal_test(state) else self.h.eval(state, problem.turn_player(state))
 
-    def terminal_test(self, state, problem):  #TODO: vedi come implementare
+    def terminal_test(self, state, problem):
         return problem.goal_test(state)

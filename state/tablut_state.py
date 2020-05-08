@@ -75,14 +75,14 @@ class TablutState(State):
 
     def __hash__(self):
         return hash((
-            tuple(self.white_bitboard),
-            tuple(self.king_bitboard) ,
-            tuple(self.black_bitboard) ,
-            tuple(self.escape_bitboard) ,
-            tuple(self.camps_bitboard) ,
-            tuple(self.throne_bitboard) ,
-            tuple(self.turn) ,
-            tuple(self.winner)
+            self.white_bitboard,
+            self.king_bitboard,
+            self.black_bitboard,
+            self.escape_bitboard,
+            self.camps_bitboard,
+            self.throne_bitboard,
+            self.turn,
+            self.winner
         ))
 
     def __eq__(self, other):
