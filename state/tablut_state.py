@@ -45,13 +45,16 @@ class TablutState(State):
 
     def check_ended(self):
         bitboard = self.white_bitboard | self.king_bitboard
+        result = False
         if (bitboard[0] | bitboard[1] | bitboard[2] | bitboard[4] | bitboard[5] | bitboard[6] | bitboard[7] | bitboard[
             8]) == 0:
             self.winner = config.BLACK
+            result = True
         elif (self.black_bitboard[0] | self.black_bitboard[1] | self.black_bitboard[2] | self.black_bitboard[4] |
               self.black_bitboard[5] | self.black_bitboard[6] | self.black_bitboard[7] | self.black_bitboard[8]) == 0:
             self.winner = config.WHITE
-        return True
+            result = True
+        return result
 
     def move(self, action: Action):
         if action.role() == config.WHITE:
