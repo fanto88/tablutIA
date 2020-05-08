@@ -14,7 +14,6 @@ from utils.action import Action
 #           Per il semplice motivo che altrimenti fa l'or con quella vecchia
 
 
-
 class TablutState(State):
     def __init__(self, color):
         super().__init__(color)
@@ -73,3 +72,20 @@ class TablutState(State):
             self.black_bitboard = bitboard_util.unset(self.black_bitboard, action.start().row(),
                                                       action.start().column())
         return self
+
+    def __hash__(self):
+        return hash((
+            tuple(self.white_bitboard),
+            tuple(self.king_bitboard) ,
+            tuple(self.black_bitboard) ,
+            tuple(self.escape_bitboard) ,
+            tuple(self.camps_bitboard) ,
+            tuple(self.throne_bitboard) ,
+            tuple(self.turn) ,
+            tuple(self.winner)
+        ))
+
+    def __eq__(self, other):
+        if hash(self) == hash(other):
+            return True
+        return False
