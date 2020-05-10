@@ -1,5 +1,5 @@
-from client.tablut_client import Client
-import utils.config as config
+from tablut.client.tablut_client import Client
+import tablut.utils.config as config
 
 
 def main():

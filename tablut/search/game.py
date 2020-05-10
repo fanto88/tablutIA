@@ -1,5 +1,5 @@
-import utils.action_factory as action_factory
-from utils import config
+import tablut.utils.action_factory as action_factory
+from tablut.utils import config
 
 
 class Game:

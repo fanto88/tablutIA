@@ -1,8 +1,7 @@
-import numpy as np
-from search.tree import Node
+from tablut.search.tree import Node
 import time
 import os
-from search.heuristic.strategies import random
+from tablut.search.heuristic.strategies import random
 
 
 class MinMaxAgent:
@@ -39,6 +38,7 @@ class MinMaxAgent:
         # alla fine (valore, azione) è contenuto nel dict checked
     # TODO: se fai quanto detto sopra, potresti togliere i nodi
     def _minimax(self, node, problem, max_turn, alpha, beta):
+        print("<PID {}>: stato: {}".format(os.getpid(), node.state))
 
         # Controlla se lo stato corrente è già stato elaborato
         """if self._already_checked(node.state):
@@ -57,8 +57,8 @@ class MinMaxAgent:
                 or (time.time() - self.timer) >= self.max_time:
 
             values = self.utility(node.state, problem), node.action
-            print("<PID {}>: values: {}".format(os.getpid(), values))
 
+            # TODO: risolvi problema del mark_checked
             #self._mark_checked(node.state, values)
             return values
 
@@ -97,7 +97,8 @@ class MinMaxAgent:
 
     # TODO: modifica l'euristica che viene utilizzata
     def utility(self, state, problem):
-        return problem.value(state, state.turn) if problem.goal_test(state) else self.h.eval(state, problem.turn_player(state))
+        return problem.value(state, state.turn) if problem.goal_test(state) \
+            else self.h.eval(state, problem.turn_player(state))
 
     def terminal_test(self, state, problem):
         return problem.goal_test(state)

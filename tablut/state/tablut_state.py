@@ -1,10 +1,10 @@
 import numpy
 
-import utils.bitboard_util as bitboard_util
-from state.state import State
-from state.state_factory import StateFactory
-from utils import config
-from utils.action import Action
+import tablut.utils.bitboard_util as bitboard_util
+from tablut.state.state import State
+from tablut.state.state_factory import StateFactory
+from tablut.utils import config
+from tablut.utils.action import Action
 
 
 # TODO: Pulire il codice e renderlo il più veloce ed ottimizzato possibile. Togliere tutti i for per esempio

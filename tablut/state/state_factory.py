@@ -1,5 +1,5 @@
-from copy import copy, deepcopy
-from utils import config
+from copy import deepcopy
+from tablut.utils import config
 
 
 class StateFactory:

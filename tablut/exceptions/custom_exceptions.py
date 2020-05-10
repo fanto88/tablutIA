@@ -1,4 +1,4 @@
-from utils.action import Action
+from tablut.utils.action import Action
 
 
 class StopException(Exception):

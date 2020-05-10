@@ -1,12 +1,11 @@
-import utils.config as config
-from client.algorithm import Algorithm
-from network.connection_handler import ConnectionHandler
-from search.game import TablutProblem
-from state.tablut_state import TablutState
-from search import parallel_search as parallel_search
+import tablut.utils.config as config
+from tablut.client.connection_handler import ConnectionHandler
+from tablut.search.game import TablutProblem
+from tablut.state.tablut_state import TablutState
+from tablut.search import parallel_search as parallel_search
+
 
 # TODO: Trovare la motivazione per cui il client bianco invia un nome diverso. Problema del server?
-from utils import action_factory
 # TODO: passare TablutProblem dentro searc/game.py come classe del problema
 
 class Client(ConnectionHandler):
@@ -18,7 +17,6 @@ class Client(ConnectionHandler):
         self.__player_name = config.PLAYER_NAME
         self.__role = role
         self.__state = TablutState(self.__role)
-        self.__algorithm = Algorithm(self.__role)
 
     def run(self):
         """Implements the logic of the client."""
@@ -30,7 +28,6 @@ class Client(ConnectionHandler):
                 if self.__role == self.__state.turn:  # check if our turn or not
                     search = parallel_search.ParallelMinMax(2, 3, 20)
                     action = search.make_decision(self.__state, TablutProblem())
-                    #action = self.__algorithm.get_move(self.__state)  # Algorithm return a move
                     if action is not None:
                         self.__state.move(action)  # Execute the move
                         self.send_string(action.to_server_format())  # send the move to the server

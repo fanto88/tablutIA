@@ -1,5 +1,5 @@
-from utils import config, bitboard_util
-from utils.action import Position, Action
+from tablut.utils import bitboard_util, config
+from tablut.utils.action import Position, Action
 
 
 def get_available_actions_for_pawn(position, obstacle_bitboard, color):

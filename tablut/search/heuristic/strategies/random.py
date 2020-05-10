@@ -1,5 +1,5 @@
 import secrets
-from search.heuristic.strategies.strategy import HeuristicStrategy
+from tablut.search.heuristic.strategies.strategy import HeuristicStrategy
 
 
 class RandomStrategy(HeuristicStrategy):

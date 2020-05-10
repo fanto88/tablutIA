@@ -2,10 +2,10 @@ from logging import Logger
 
 import numpy
 
-import utils.bitboard_util as bitboard_util
-from exceptions.custom_exceptions import *
-from state.tablut_state import TablutState
-from utils import config
+import tablut.utils.bitboard_util as bitboard_util
+from tablut.exceptions.custom_exceptions import *
+from tablut.state.tablut_state import TablutState
+from tablut.utils import config
 
 
 class Tablut:  # TODO: add other methods, such as expand, actions, ...

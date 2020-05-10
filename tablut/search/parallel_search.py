@@ -1,6 +1,5 @@
-import importlib
 from multiprocessing import (Process, Manager)
-from search.search import MinMaxAgent
+from tablut.search.search import MinMaxAgent
 
 import os
 import operator
@@ -80,7 +79,6 @@ class ParallelMinMax(MinMaxAgent):
 
         # Append results to the shared struct TODO: aggiungi solo il migliore tra i risultati
         out += partial_result
-        print("<PID {} best_actions({}) {} partial_result({}) {}".format(os.getpid(), len(best_actions), best_actions, len(partial_result), partial_result))
         print("<PID {}> Stati: {}, Risultati (stato, valore): {} Stati saltati: {}".format(
             os.getpid(), states, partial_result, self.node_skipped))
 
