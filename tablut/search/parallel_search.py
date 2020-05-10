@@ -65,14 +65,11 @@ class ParallelMinMax(MinMaxAgent):
     # Every process will execute this method
     def _worker(self, states, problem, maximize, out):
 
-        # Couples (action, value)
-        best_actions = [self.choose_action(state, problem, maximize=maximize) for state in states]
+        # Utility value of each state inside "states" list
+        values = [self.choose_action(state, problem, maximize=maximize) for state in states]
 
         # Visto che il primo livello è stato diviso
         self.max_depth += 1  # TODO: cambia qualcosa toglierlo?
-
-        # List of values of best_actions
-        values = [a[1] for a in best_actions]
 
         # Couples (state, value)
         partial_result = list(zip(states, values))

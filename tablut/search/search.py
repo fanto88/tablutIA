@@ -22,8 +22,8 @@ class MinMaxAgent:
         self.node_skipped = 0
         self.timer = time.time()
 
-        eval_score, selected_action = self._minimax(Node(state), problem, maximize, float('-inf'), float('inf'))
-        return selected_action, eval_score
+        eval_score = self._minimax(Node(state), problem, maximize, float('-inf'), float('inf'))
+        return eval_score
 
     def _already_checked(self, state):
         return state in self.checked
@@ -42,7 +42,7 @@ class MinMaxAgent:
         # Controlla se lo stato corrente è già stato elaborato
         if self._already_checked(node.state):
             self.node_skipped += 1
-            return (float('-inf'), None) if maximize else (float('inf'), None)
+            return float('-inf') if maximize else float('inf')
         else:
             self._mark_checked(node.state)
 
@@ -54,36 +54,32 @@ class MinMaxAgent:
                 or self.terminal_test(node.state, problem) \
                 or (time.time() - self.timer) >= self.max_time:
 
-            values = self.utility(node.state, problem), node.action
+            values = self.utility(node.state, problem)
 
-            # TODO: risolvi problema del mark_checked
             self._mark_checked(node.state)
             return values
 
         self.node_expanded += 1
         value = float('-inf') if maximize else float('inf')
-        best_action = ''
 
         list_actions = self.possible_actions(node.state, problem)
         for action in list_actions:  # TODO: vettorizza il codice
             new_state = self.resulting_state(node.state, action, problem)
             new_node = Node(new_state, node, action, node.path_cost+1)
-            child_value, child_action = self._minimax(new_node, problem, not maximize, alpha, beta)
+            child_value = self._minimax(new_node, problem, not maximize, alpha, beta)
             if maximize and value < child_value:
                 value = child_value
-                best_action = action
                 alpha = max(alpha, value)
                 if beta <= alpha:
                     break
 
             elif (not maximize) and value > child_value:
                 value = child_value
-                best_action = action
                 beta = min(beta, value)
                 if beta <= alpha:
                     break
 
-        return value, best_action
+        return value
 
     # Utils
     def possible_actions(self, state, problem):
