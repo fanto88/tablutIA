@@ -34,30 +34,29 @@ class MinMaxAgent:
     def _mark_checked(self, state):
         self.checked[state] = 1    # values = (value of single state, action)
 
-    # TODO: si può provare a ottimizzare l'algoritmo e non restituire per ogni stato (valore, azione) ma solo valore /
-        # alla fine (valore, azione) è contenuto nel dict checked
+    # TODO: si può provare a ottimizzare l'algoritmo e non restituire per ogni stato (valore, azione) ma solo valore
     # TODO: se fai quanto detto sopra, potresti togliere i nodi
     def _minimax(self, node, problem, maximize, alpha, beta):
-
-        # Controlla se lo stato corrente è già stato elaborato
-        if self._already_checked(node.state):
-            self.node_skipped += 1
-            return float('-inf') if maximize else float('inf')
-        else:
-            self._mark_checked(node.state)
 
         # Ricerca termina se:
         #   -E' uno stato terminale
         #   -Il tempo è scaduto
         #   -Non voglio più espandere l'albero
+        print("Secondi passati:", time.time() - self.timer)
         if node.depth == self.max_depth \
                 or self.terminal_test(node.state, problem) \
                 or (time.time() - self.timer) >= self.max_time:
-
             values = self.utility(node.state, problem)
 
             self._mark_checked(node.state)
             return values
+
+        # Controlla se lo stato corrente è già stato elaborato
+        if self._already_checked(node.state):
+            self.node_skipped += 1
+            return float('-inf') if not maximize else float('inf')
+        else:
+            self._mark_checked(node.state)
 
         self.node_expanded += 1
         value = float('-inf') if maximize else float('inf')

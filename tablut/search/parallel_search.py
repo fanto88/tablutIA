@@ -60,6 +60,8 @@ class ParallelMinMax(MinMaxAgent):
         for state, action in state_action:
             if state == best_state:
                 best_action = action
+                print("Master: risultato (stato, azione) ({state}, {action})".format(state=state, action=action))
+
         return best_action
 
     # Every process will execute this method
@@ -76,8 +78,8 @@ class ParallelMinMax(MinMaxAgent):
 
         # Append results to the shared struct TODO: aggiungi solo il migliore tra i risultati
         out += partial_result
-        print("<PID {}> Stati: {}, Risultati (stato, valore): {} Stati saltati: {}".format(
-            os.getpid(), states, partial_result, self.node_skipped))
+        print("<PID {}> Stati saltati: {} Risultati (stato, valore): {} ".format(
+            os.getpid(), self.node_skipped, states))
 
 
 # Util
