@@ -23,13 +23,13 @@ class Client(ConnectionHandler):
             state = StateFactory().load_state_from_json(self.read_string(), self.color)  # Read the initial state
             while True:  # Game loop
                 if self.color == state.turn:  # check if our turn or not
-                    search = parallel_search.ParallelMinMax(2, 3, self.timeout - 5)
+                    search = parallel_search.ParallelMinMax(2, 2, self.timeout - 5)
                     action = search.make_decision(state, TablutProblem())
                     if action is not None:
                         state.move(action)  # Execute the action
                         self.send_string(action.to_server_format())  # send the action to the server
                 state = StateFactory().load_state_from_json(self.read_string(), self.color)  # Read the next state
-        except Exception:
-            pass
+        except Exception as ex:
+            print(ex)
         finally:
             print("Game Terminated - Closing Connection")
