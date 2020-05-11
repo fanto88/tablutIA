@@ -8,7 +8,6 @@ import operator
 class ParallelMinMax(MinMaxAgent):
 
     def __init__(self, process_no, max_depth, max_time):
-        # TODO: guarda max_depth -1 qua sotto e max_depth += 1 nella funzione workers e vedi come risolvere
         super(ParallelMinMax, self).__init__(max_depth-1, max_time)
         self.process_no = process_no
         self.jobs = []
@@ -33,7 +32,7 @@ class ParallelMinMax(MinMaxAgent):
         cut_first_level_states = list(chunks(first_level_states, cut))
 
         # Preparing workers
-        self.jobs = [Process(target=self._worker, args=(states, problem, not maximize, self._result))
+        self.jobs = [Process(target=self._worker, args=(states, len(first_level_states), problem, not maximize, self._result))
                             for states in cut_first_level_states]
 
         # Start workers
@@ -41,6 +40,10 @@ class ParallelMinMax(MinMaxAgent):
 
         # Wait for workers
         [p.join() for p in self.jobs]
+
+        # Visto che questa classe ottiene gli stati di profondità 1 e ai sottoprocessi viene passata
+        # profondità massima ridotta di 1
+        self.max_depth += 1
 
         # self._result contains couples (first_level_state, value) obtained by child processors
         # sorting the list by value means the first couple (state, value) is the best one
@@ -65,13 +68,12 @@ class ParallelMinMax(MinMaxAgent):
         return best_action
 
     # Every process will execute this method
-    def _worker(self, states, problem, maximize, out):
+    def _worker(self, states, total_states, problem, maximize, out):
+        # TODO: imposta in modo efficienti il timer... magari cambiando la struttura
+        self.max_time = self.max_time/total_states
 
         # Utility value of each state inside "states" list
         values = [self.choose_action(state, problem, maximize=maximize) for state in states]
-
-        # Visto che il primo livello è stato diviso
-        self.max_depth += 1  # TODO: cambia qualcosa toglierlo?
 
         # Couples (state, value)
         partial_result = list(zip(states, values))

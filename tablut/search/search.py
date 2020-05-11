@@ -42,7 +42,7 @@ class MinMaxAgent:
         #   -E' uno stato terminale
         #   -Il tempo è scaduto
         #   -Non voglio più espandere l'albero
-        print("Secondi passati:", time.time() - self.timer)
+        #print("Secondi passati:", time.time() - self.timer)
         if node.depth == self.max_depth \
                 or self.terminal_test(node.state, problem) \
                 or (time.time() - self.timer) >= self.max_time:
