@@ -54,7 +54,7 @@ class TablutState(State):
         if position.column() + 2 <= 8:
             if bitboard_util.get_bit(obstacle_bitboard, position.row(), position.column()+2) == 1:
                 if bitboard_util.get_bit(result, position.row(), position.column() + 1) == 1:
-                    result = bitboard_util.unset(result, position.row(), position.column() - 1)
+                    result = bitboard_util.unset(result, position.row(), position.column() + 1)
         return result
 
 

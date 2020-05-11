@@ -23,7 +23,7 @@ class Client(ConnectionHandler):
             state = StateFactory().load_state_from_json(self.read_string(), self.color)  # Read the initial state
             while True:  # Game loop
                 if self.color == state.turn:  # check if our turn or not
-                    search = parallel_search.ParallelMinMax(2, 2, self.timeout - 5)
+                    search = parallel_search.ParallelMinMax(3, 10, self.timeout - 5)
                     action = search.make_decision(state, TablutProblem())
                     if action is not None:
                         state.move(action)  # Execute the action
