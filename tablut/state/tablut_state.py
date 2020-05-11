@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 import tablut.utils.bitboard_util as bitboard_util
 from tablut.state.state import State
 from tablut.utils import config
@@ -9,7 +7,8 @@ from tablut.utils.action import Action
 # TODO: Pulire il codice e renderlo il più veloce ed ottimizzato possibile. Togliere tutti i for per esempio
 # TODO: Dove si fa il controllo se mangia qualcosa?
 # TODO: Come faccio a modificare direttamente self.__white_bitboard??? dentro move
-
+# TODO: Migliorare il controllo se mangia il re o altre pedine strane
+# TODO: Check if check_if_eat funziona, guardare anche dentro heuristica se effettivamente dice che mangia
 
 class TablutState(State):
     def __init__(self, color):
@@ -35,28 +34,26 @@ class TablutState(State):
 
     def check_if_eat(self, bitboard, position):
         obstacle_bitboard = self.black_bitboard | self.white_bitboard | self.king_bitboard | self.throne_bitboard | self.camps_bitboard
-        result = deepcopy(bitboard)
         if position.row() - 2 >= 0:
-            if bitboard_util.get_bit(obstacle_bitboard, position.row()-2, position.column()) == 1:
-                if bitboard_util.get_bit(result, position.row() - 1, position.column()) == 1:
-                    result = bitboard_util.unset(result, position.row() - 1, position.column())
+            if bitboard_util.get_bit(obstacle_bitboard, position.row() - 2, position.column()) == 1:
+                if bitboard_util.get_bit(bitboard, position.row() - 1, position.column()) == 1:
+                    bitboard = bitboard_util.unset(bitboard, position.row() - 1, position.column())
 
         if position.column() - 2 >= 0:
-            if bitboard_util.get_bit(obstacle_bitboard, position.row(), position.column()-2) == 1:
-                if bitboard_util.get_bit(result, position.row(), position.column() - 1) == 1:
-                    result = bitboard_util.unset(result, position.row(), position.column() - 1)
+            if bitboard_util.get_bit(obstacle_bitboard, position.row(), position.column() - 2) == 1:
+                if bitboard_util.get_bit(bitboard, position.row(), position.column() - 1) == 1:
+                    bitboard = bitboard_util.unset(bitboard, position.row(), position.column() - 1)
 
         if position.row() + 2 <= 8:
-            if bitboard_util.get_bit(obstacle_bitboard, position.row()+2, position.column()) == 1:
-                if bitboard_util.get_bit(result, position.row() + 1, position.column()) == 1:
-                    result = bitboard_util.unset(result, position.row() + 1, position.column())
+            if bitboard_util.get_bit(obstacle_bitboard, position.row() + 2, position.column()) == 1:
+                if bitboard_util.get_bit(bitboard, position.row() + 1, position.column()) == 1:
+                    bitboard = bitboard_util.unset(bitboard, position.row() + 1, position.column())
 
         if position.column() + 2 <= 8:
-            if bitboard_util.get_bit(obstacle_bitboard, position.row(), position.column()+2) == 1:
-                if bitboard_util.get_bit(result, position.row(), position.column() + 1) == 1:
-                    result = bitboard_util.unset(result, position.row(), position.column() + 1)
-        return result
-
+            if bitboard_util.get_bit(obstacle_bitboard, position.row(), position.column() + 2) == 1:
+                if bitboard_util.get_bit(bitboard, position.row(), position.column() + 1) == 1:
+                    bitboard = bitboard_util.unset(bitboard, position.row(), position.column() + 1)
+        return bitboard
 
     def move(self, action: Action):
         if action.role() == config.WHITE:

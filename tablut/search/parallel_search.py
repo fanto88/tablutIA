@@ -48,9 +48,9 @@ class ParallelMinMax(MinMaxAgent):
         # self._result contains couples (first_level_state, value) obtained by child processors
         # sorting the list by value means the first couple (state, value) is the best one
         self._result.sort(key=operator.itemgetter(1), reverse=maximize)
-        print("----------------------------------")
-        print(self._result)
-        print(list(zip(first_level_states, list_actions)))
+        #print("----------------------------------")
+        #print(self._result)
+        #print(list(zip(first_level_states, list_actions)))
 
         # list(zip(first_level_states, list_actions)) is list of couples (first_level_state, action_to_reach_that_state)
         # filter is used to obtain the best action, using the best state (first element of self._result) as key
@@ -61,9 +61,14 @@ class ParallelMinMax(MinMaxAgent):
         best_state = self._result[0][0]
         best_action = ''
         for state, action in state_action:
+            print(best_state, "|", state)
             if state == best_state:
                 best_action = action
-                print("Master: risultato (stato, azione) ({state}, {action})".format(state=state, action=action))
+                break
+                #print("Master: risultato (stato, azione) ({state}, {action})".format(state=state, action=action))
+        print("AZIONE:" ,best_action, "TIPO:", type(best_action))
+        print("\n\n")
+        print("-------------")
 
         return best_action
 
@@ -80,8 +85,8 @@ class ParallelMinMax(MinMaxAgent):
 
         # Append results to the shared struct TODO: aggiungi solo il migliore tra i risultati
         out += partial_result
-        print("<PID {}> Stati saltati: {} Risultati (stato, valore): {} ".format(
-            os.getpid(), self.node_skipped, states))
+        #print("<PID {}> Stati saltati: {} Risultati (stato, valore): {} ".format(
+            #os.getpid(), self.node_skipped, states))
 
 
 # Util

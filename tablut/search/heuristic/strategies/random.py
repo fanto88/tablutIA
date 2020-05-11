@@ -43,15 +43,20 @@ class RandomStrategy(HeuristicStrategy):
                 multiplier = BLACK_PIECE_AROUND_KING_IN_THRONE
             else:
                 multiplier = BLACK_PIECE_AROUND_KING
-            if bitboard_util.get_bit(state.black_bitboard, king_position.row(), king_position.column() - 1) == 1:
-                count += 1
-            if bitboard_util.get_bit(state.black_bitboard, king_position.row(), king_position.column() + 1) == 1:
-                count += 1
-            if bitboard_util.get_bit(state.black_bitboard, king_position.row() - 1, king_position.column()) == 1:
-                count += 1
-            if bitboard_util.get_bit(state.black_bitboard, king_position.row() + 1, king_position.column()) == 1:
-                count += 1
-        return count * multiplier
+            if king_position.column() - 1 >= 0:
+                if bitboard_util.get_bit(state.black_bitboard, king_position.row(), king_position.column() - 1) == 1:
+                    count += 1
+            if king_position.column() + 1 <= 8:
+                if bitboard_util.get_bit(state.black_bitboard, king_position.row(), king_position.column() + 1) == 1:
+                    count += 1
+            if king_position.row() - 1 >= 0:
+                if bitboard_util.get_bit(state.black_bitboard, king_position.row() - 1, king_position.column()) == 1:
+                    count += 1
+            if king_position.row() + 1 <= 8:
+                if bitboard_util.get_bit(state.black_bitboard, king_position.row() + 1, king_position.column()) == 1:
+                    count += 1
+            return count * multiplier
+        return 0
 
     def black_in_good_position(self, state):
         value = 0
