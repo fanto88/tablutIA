@@ -1,4 +1,5 @@
 import tablut.utils.action_factory as action_factory
+from tablut.state.state_factory import StateFactory
 from tablut.utils import config
 
 
@@ -64,7 +65,7 @@ class TablutProblem(Game):
             return -1
 
     def process_action(self, state, action):
-        return state.load_state_from_action(state, action)
+        return StateFactory.load_state_from_action(state, action)
 
     def turn_player(self, state):
         return state.turn

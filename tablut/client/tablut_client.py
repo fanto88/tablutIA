@@ -1,38 +1,35 @@
 import tablut.utils.config as config
 from tablut.client.connection_handler import ConnectionHandler
-from tablut.search.game import TablutProblem
-from tablut.state.tablut_state import TablutState
 from tablut.search import parallel_search as parallel_search
+from tablut.search.game import TablutProblem
+from tablut.state.state_factory import StateFactory
 
-
-# TODO: Trovare la motivazione per cui il client bianco invia un nome diverso. Problema del server?
-# TODO: passare TablutProblem dentro searc/game.py come classe del problema
 
 class Client(ConnectionHandler):
-    """Class that define the client logic.
-    Extend ConnectionHandler that handles the connection between client and server."""
+    """Class that define the client logic. Extend ConnectionHandler that handles the connection
+    between client and server."""
 
-    def __init__(self, port, host, role):
+    def __init__(self, port, host, color, timeout):
         super().__init__(port, host)
-        self.__player_name = config.PLAYER_NAME
-        self.__role = role
-        self.__state = TablutState(self.__role)
+        self.player_name = config.PLAYER_NAME
+        self.color = color
+        self.timeout = timeout
 
     def run(self):
         """Implements the logic of the client."""
         try:
             self.connect()  # Connecting to the server
-            self.send_string(self.__player_name)  # Sending the name
-            self.__state.load_state_from_json(self.read_string())  # Read the initial state
+            self.send_string(self.player_name)  # Sending the name
+            state = StateFactory().load_state_from_json(self.read_string(), self.color)  # Read the initial state
             while True:  # Game loop
-                if self.__role == self.__state.turn:  # check if our turn or not
-                    search = parallel_search.ParallelMinMax(2, 3, 20)
-                    action = search.make_decision(self.__state, TablutProblem())
+                if self.color == state.turn:  # check if our turn or not
+                    search = parallel_search.ParallelMinMax(2, 3, self.timeout - 5)
+                    action = search.make_decision(state, TablutProblem())
                     if action is not None:
-                        self.__state.move(action)  # Execute the move
-                        self.send_string(action.to_server_format())  # send the move to the server
-                self.__state.load_state_from_json(self.read_string())  # read the new state
-        except ConnectionResetError:
+                        state.move(action)  # Execute the action
+                        self.send_string(action.to_server_format())  # send the action to the server
+                state = StateFactory().load_state_from_json(self.read_string(), self.color)  # Read the next state
+        except Exception:
             pass
         finally:
             print("Game Terminated - Closing Connection")

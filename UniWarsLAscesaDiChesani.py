@@ -1,33 +1,24 @@
 import argparse
-import sys
 
 from tablut.client.tablut_client import Client
 from tablut.utils import config
 
+parser = argparse.ArgumentParser(description='Default Behaviour: Color = White | Timeout = 60s | Server = localhost |\
+                                                Port = 5800')
+parser.add_argument("-c", "--color", choices=['white', 'black'], type=str.lower, default='white',
+                    help="Set the player color. Valid option: white/black")
+parser.add_argument("-t", "--timeout", type=int, default=60, help="Change the timeout time")
+parser.add_argument("-s", "--server", default='localhost', help="Change the host address. Format X.X.X.X")
+parser.add_argument("-p", "--port", type=int, help="Change the server port.")
 
-argv = sys.argv[1:]
-argl = len(argv)
-color = config.WHITE
-timeout = 60
-server_ip = "localhost"
-server_port = config.WHITE_SERVER_PORT
+args = parser.parse_args()
+color = config.WHITE if args.color.lower() == 'white' else config.BLACK
+timeout = args.timeout
+server_ip = args.server
 
+if args.port is None:
+    server_port = config.WHITE_SERVER_PORT if color == config.WHITE else config.BLACK_SERVER_PORT
+else:
+    server_port = args.port
 
-# Check the color
-if argl >= 1:
-    color = config.WHITE if argv[0].lower() == 'white' else config.BLACK
-    server_port = config.WHITE_SERVER_PORT if argv[0].lower() == 'white' else config.BLACK_SERVER_PORT
-
-# Check timeout
-if argl >= 2:
-    timeout = int(argv[1])
-
-# Check server address
-if argl >= 3:
-    server_complete_address = argv[2].split(':')
-    server_ip = server_complete_address[0]
-    server_port = int(server_complete_address[1])
-
-# Start the client
-Client(server_port, server_ip, color).run()
-
+Client(server_port, server_ip, color, timeout).run()
