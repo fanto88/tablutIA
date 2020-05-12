@@ -27,6 +27,7 @@ class TablutState(State):
                 self.king_bitboard = bitboard_util.unset(self.king_bitboard, self.king_position.row(),
                                                          self.king_position.column())
                 self.king_position = None
+
         # Se è adiacente al trono
         elif (self.king_position == Position(3, 4)) or (self.king_position == Position(5, 4)) or (
                 self.king_position == Position(4, 5)) or (self.king_position == Position(4, 3)):
@@ -34,6 +35,7 @@ class TablutState(State):
                 self.king_bitboard = bitboard_util.unset(self.king_bitboard, self.king_position.row(),
                                                          self.king_position.column())
                 self.king_position = None
+
         # Se è lontano dal trono
         else:
             obstacle_bitboard = self.king_bitboard | self.black_bitboard | self.throne_bitboard | self.camps_bitboard
@@ -41,7 +43,8 @@ class TablutState(State):
             self.king_position = None
 
     def check_ended(self):
-        if bitboard_util.count_piece(self.king_bitboard) == 0:
+        # TODO: Da verificare che funzioni
+        if self.king_position is None:
             self.winner = config.BLACK
             return True
 
@@ -49,7 +52,6 @@ class TablutState(State):
             self.winner = config.WHITE
             return True
 
-        # TODO: Da verificare che funzioni
         if bitboard_util.count_piece(self.king_bitboard & self.escape_bitboard) == 1:
             self.winner = config.WHITE
             return True

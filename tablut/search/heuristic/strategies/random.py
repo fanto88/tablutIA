@@ -1,15 +1,14 @@
-from random import random
-
 from tablut.search.heuristic.strategies.strategy import HeuristicStrategy
 from tablut.utils import bitboard_util, config
 from tablut.utils.action import Position
 
-BLACK_PIECE_AROUND_KING_IN_THRONE = 0
+BLACK_PIECE_AROUND_KING_IN_THRONE = 50
 BLACK_PIECE_AROUND_KING = 0
 BLACK_GOOD_POSITION = 0.0
 KING_IN_WINNING_POSITION = 0.0
 KING_INSIDE_ESCAPE = 10000
 KING_EATED = 10000
+
 
 # TODO: Aggiungere un bonus per mangiare una pedina
 # La differenza tra le pedine vale 1 punto
@@ -22,48 +21,31 @@ class RandomStrategy(HeuristicStrategy):
     def eval(self, state, player):
         try:
             value = 0
+            multiplier = BLACK_PIECE_AROUND_KING
+            if state.king_position == Position(4, 4):
+                multiplier = BLACK_PIECE_AROUND_KING_IN_THRONE
+
             if player == config.WHITE:
-                value += - self.black_pieces_around_king(state) - self.black_in_good_position(state) + (
-                        self.count_piece(state.white_bitboard | state.king_bitboard) - 1) * 2 - self.count_piece(
-                    state.black_bitboard) + self.king_in_winning_position(state) + self.king_in_escape(
-                    state) - self.king_eated(state)
+                value -= bitboard_util.count_adjacent(state.king_position, state.black_bitboard) * multiplier
+                value -= self.black_in_good_position(state)
+                value += (bitboard_util.count_piece(state.white_bitboard | state.king_bitboard) - 1) * 2
+                value -= bitboard_util.count_piece(state.black_bitboard)
+                value += self.king_in_winning_position(state)
+                value += self.king_in_escape(state)
+                value -= self.king_eated(state)
             else:
-                value += self.black_pieces_around_king(state) + self.black_in_good_position(state) - (
-                        self.count_piece(state.white_bitboard | state.king_bitboard) - 1) * 2 + self.count_piece(
-                    state.black_bitboard) - self.king_in_winning_position(state) - self.king_in_escape(
-                    state) + self.king_eated(state)
-            #print(self.count_piece(state.white_bitboard))
+                value += bitboard_util.count_adjacent(state.king_position, state.black_bitboard) * multiplier
+                value += self.black_in_good_position(state)
+                value -= (bitboard_util.count_piece(state.white_bitboard | state.king_bitboard) - 1) * 2
+                value += bitboard_util.count_piece(state.black_bitboard)
+                value -= self.king_in_winning_position(state)
+                value -= self.king_in_escape(state)
+                value += self.king_eated(state)
+
+            return value
         except Exception as e:
             print(e)
-        return value
 
-    def black_pieces_around_king(self, state):
-        king_position = None
-        for row in range(9):
-            for column in range(9):
-                if bitboard_util.get_bit(state.king_bitboard, row, column) == 1:
-                    king_position = Position(row, column)
-                    break
-        count = 0
-        if king_position is not None:
-            if king_position.row() == 4 and king_position.column() == 4:
-                multiplier = BLACK_PIECE_AROUND_KING_IN_THRONE
-            else:
-                multiplier = BLACK_PIECE_AROUND_KING
-            if king_position.column() - 1 >= 0:
-                if bitboard_util.get_bit(state.black_bitboard, king_position.row(), king_position.column() - 1) == 1:
-                    count += 1
-            if king_position.column() + 1 <= 8:
-                if bitboard_util.get_bit(state.black_bitboard, king_position.row(), king_position.column() + 1) == 1:
-                    count += 1
-            if king_position.row() - 1 >= 0:
-                if bitboard_util.get_bit(state.black_bitboard, king_position.row() - 1, king_position.column()) == 1:
-                    count += 1
-            if king_position.row() + 1 <= 8:
-                if bitboard_util.get_bit(state.black_bitboard, king_position.row() + 1, king_position.column()) == 1:
-                    count += 1
-            return count * multiplier
-        return 0
 
     def black_in_good_position(self, state):
         value = 0
@@ -84,14 +66,6 @@ class RandomStrategy(HeuristicStrategy):
         if bitboard_util.get_bit(state.black_bitboard, 7, 2):
             value += BLACK_GOOD_POSITION
         return value
-
-    def count_piece(self, bitboard):
-        count = 0
-        for row in range(9):
-            for column in range(9):
-                if bitboard_util.get_bit(bitboard, row, column) == 1:
-                    count += 1
-        return count
 
     def king_in_winning_position(self, state):
         king_position = None
