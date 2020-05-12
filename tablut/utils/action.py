@@ -1,6 +1,3 @@
-# TODO: Togliere i parametri con __ e mettere pubblici, togliere quindi anche i get
-
-
 class Position:
     def __init__(self, row, column):
         self.__row = row
@@ -13,7 +10,7 @@ class Position:
         return self.__column
 
     def __eq__(self, other):
-        if self.__row == other.row() & self.__column == other.column():
+        if self.__row == other.row() and self.__column == other.column():
             return True
         return False
 

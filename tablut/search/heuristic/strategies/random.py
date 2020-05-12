@@ -4,10 +4,10 @@ from tablut.search.heuristic.strategies.strategy import HeuristicStrategy
 from tablut.utils import bitboard_util, config
 from tablut.utils.action import Position
 
-BLACK_PIECE_AROUND_KING_IN_THRONE = 0.04
-BLACK_PIECE_AROUND_KING = 500
-BLACK_GOOD_POSITION = 0.03
-KING_IN_WINNING_POSITION = 0.1
+BLACK_PIECE_AROUND_KING_IN_THRONE = 0
+BLACK_PIECE_AROUND_KING = 0
+BLACK_GOOD_POSITION = 0.0
+KING_IN_WINNING_POSITION = 0.0
 KING_INSIDE_ESCAPE = 10000
 KING_EATED = 10000
 
@@ -21,7 +21,6 @@ KING_EATED = 10000
 class RandomStrategy(HeuristicStrategy):
     def eval(self, state, player):
         try:
-
             value = 0
             if player == config.WHITE:
                 value += - self.black_pieces_around_king(state) - self.black_in_good_position(state) + (
@@ -172,8 +171,11 @@ class RandomStrategy(HeuristicStrategy):
         return 0
 
     def king_eated(self, state):
-        if (state.king_bitboard[0] | state.king_bitboard[1] | state.king_bitboard[2] | state.king_bitboard[4] |
-            state.king_bitboard[5] | state.king_bitboard[6] | state.king_bitboard[7] | state.king_bitboard[8]) == 0:
-            print("MANGIATO!!!")
+        result = False
+        for row in range(9):
+            for column in range(9):
+                if bitboard_util.get_bit(state.king_bitboard, row, column) == 1:
+                    result = True
+        if not result:
             return KING_EATED
         return 0
