@@ -2,6 +2,7 @@ from tablut.search.tree import Node
 import time
 import os
 from tablut.search.heuristic.strategies import random
+import operator
 
 
 class MinMaxAgent:
@@ -17,17 +18,39 @@ class MinMaxAgent:
         # TODO: DA ELIMINARE ASSOLUTAMENTE
         self.h = random.RandomStrategy()
 
+    def _best(self, actions_values, maximize):
+        """Returns the first "action" in the given list,
+        ordered by "values" Ascendant or Descendant, depending on "maximize" var."""
+
+        actions_values.sort(key=operator.itemgetter(1), reverse=maximize)
+        return actions_values[0] if actions_values else []
+
     def choose_action(self, state, problem, maximize=True, max_depth=None):
+        self.timer = time.time()
+        if self.terminal_test(state, problem):
+            return self.utility(state, problem)
+
         self.node_expanded = 0
         self.node_skipped = 0
-        self.timer = time.time()
         if max_depth:
             self.max_depth = max_depth
 
-        eval_score = self._minimax(Node(state), problem, maximize, float('-inf'), float('inf'))
-        return eval_score
+        # All possible actions applicable in the given state
+        actions = self.possible_actions(state, problem)
+
+        # Child states of the given one
+        states = [self.resulting_state(state, action, problem) for action in actions]
+
+        # Utility value, for each state
+        eval_scores = [self._minimax(Node(st), problem, not maximize, float('-inf'), float('inf')) for st in states]
+
+        # Obtaining best action
+        best_action, best_value = self._best(list(zip(actions, eval_scores)), maximize)
+
+        return best_action, best_value
 
     def _already_checked(self, state):
+        #print("(stato, stati_computati):{}".format(state, self.checked))
         return state in self.checked
 
     def _already_checked_result(self, state):
@@ -39,7 +62,7 @@ class MinMaxAgent:
     # TODO: si può provare a ottimizzare l'algoritmo e non restituire per ogni stato (valore, azione) ma solo valore
     # TODO: se fai quanto detto sopra, potresti togliere i nodi
     def _minimax(self, node, problem, maximize, alpha, beta):
-        print("(stato, profondità): ({}, {})".format(node.state, node.depth))
+        #print("(stato, profondità): ({}, {})".format(node.state, node.depth))
         # Ricerca termina se:
         #   -E' uno stato terminale
         #   -Il tempo è scaduto
