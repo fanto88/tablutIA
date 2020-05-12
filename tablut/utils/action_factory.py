@@ -3,8 +3,8 @@ from tablut.utils.action import Position, Action
 
 
 def get_available_actions_for_pawn(position, obstacle_bitboard, color):
-    row_index = position.row()
-    column_index = position.column()
+    row_index = position.row
+    column_index = position.column
     all_available_moves_for_pawn = []
     for row in range(row_index - 1, -1, -1):
         if bitboard_util.get_bit(obstacle_bitboard, row, column_index) != 1:

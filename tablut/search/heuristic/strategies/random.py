@@ -2,7 +2,7 @@ from tablut.search.heuristic.strategies.strategy import HeuristicStrategy
 from tablut.utils import bitboard_util, config
 from tablut.utils.action import Position
 
-BLACK_PIECE_AROUND_KING_IN_THRONE = 50
+BLACK_PIECE_AROUND_KING_IN_THRONE = 0
 BLACK_PIECE_AROUND_KING = 0
 BLACK_GOOD_POSITION = 0.0
 KING_IN_WINNING_POSITION = 0.0
@@ -16,15 +16,15 @@ KING_EATED = 10000
 # TODO: Cercare di togliere più roba che si può e usare operazioni bit sulle bitboard
 
 def is_there_obstacle_in_row(state, position):
-    row_index = position.row()
+    row_index = position.row
     obstacle_bitboard = state.black_bitboard | state.white_bitboard | state.king_bitboard | state.throne_bitboard | state.camps_bitboard
     result = False
     blocked = 0
     for row in range(row_index - 1, -1, -1):
-        if bitboard_util.get_bit(obstacle_bitboard, row, position.column()) == 1:
+        if bitboard_util.get_bit(obstacle_bitboard, row, position.column) == 1:
             blocked += 1
     for row in range(row_index + 1, 9):
-        if bitboard_util.get_bit(obstacle_bitboard, row, position.column()) == 1:
+        if bitboard_util.get_bit(obstacle_bitboard, row, position.column) == 1:
             blocked += 1
     if blocked == 2:
         result = False
@@ -32,15 +32,15 @@ def is_there_obstacle_in_row(state, position):
 
 
 def is_there_obstacle_in_column(state, position):
-    column_index = position.column()
+    column_index = position.column
     obstacle_bitboard = state.black_bitboard | state.white_bitboard | state.king_bitboard | state.throne_bitboard | state.camps_bitboard
     result = False
     blocked = 0
     for col in range(column_index - 1, -1, -1):
-        if bitboard_util.get_bit(obstacle_bitboard, position.row(), col) == 1:
+        if bitboard_util.get_bit(obstacle_bitboard, position.row, col) == 1:
             blocked += 1
     for col in range(column_index + 1, 9):
-        if bitboard_util.get_bit(obstacle_bitboard, position.row(), col) == 1:
+        if bitboard_util.get_bit(obstacle_bitboard, position.row, col) == 1:
             blocked += 1
     if blocked == 2:
         result = False
@@ -55,8 +55,8 @@ def king_in_escape(state):
                 king_position = Position(row, column)
                 break
     if king_position is not None:
-        row = king_position.row()
-        column = king_position.column()
+        row = king_position.row
+        column = king_position.column
         if row == 0:
             if column == 1 or column == 2 or column == 6 or column == 7:
                 return KING_INSIDE_ESCAPE
@@ -98,10 +98,10 @@ def king_in_winning_position(state):
                 king_position = Position(row, column)
                 break
     if king_position is not None:
-        if king_position.row() == 1 or king_position.row() == 2 or king_position.row() == 6 or king_position.row() == 7:
+        if king_position.row == 1 or king_position.row == 2 or king_position.row == 6 or king_position.row == 7:
             if not is_there_obstacle_in_row(state, king_position):
                 result += KING_IN_WINNING_POSITION
-        if king_position.column() == 1 or king_position.column() == 2 or king_position.column() == 6 or king_position.column() == 7:
+        if king_position.column == 1 or king_position.column == 2 or king_position.column == 6 or king_position.column == 7:
             if not is_there_obstacle_in_column(state, king_position):
                 result += KING_IN_WINNING_POSITION
     return result

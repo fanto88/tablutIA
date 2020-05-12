@@ -36,36 +36,36 @@ def count_adjacent(position, obstacle_bitboard):
     """Count the obstacle with around the position. Obstacle_bitboard are the pawn that you have to
     consider as obstacle."""
     count = 0
-    if get_bit(obstacle_bitboard, position.row() - 1, position.column()) == 1:
+    if get_bit(obstacle_bitboard, position.row - 1, position.column) == 1:
         count += 1
-    if get_bit(obstacle_bitboard, position.row() + 1, position.column()) == 1:
+    if get_bit(obstacle_bitboard, position.row + 1, position.column) == 1:
         count += 1
-    if get_bit(obstacle_bitboard, position.row(), position.column() - 1) == 1:
+    if get_bit(obstacle_bitboard, position.row, position.column - 1) == 1:
         count += 1
-    if get_bit(obstacle_bitboard, position.row(), position.column() + 1) == 1:
+    if get_bit(obstacle_bitboard, position.row, position.column + 1) == 1:
         count += 1
     return count
 
 
 def eat(bitboard, obstacle_bitboard, position):
     """Check if you can eat a normal Pawn and return the bitboard without the pawn ate."""
-    if position.row() - 2 >= 0:
-        if get_bit(obstacle_bitboard, position.row() - 2, position.column()) == 1:
-            if get_bit(bitboard, position.row() - 1, position.column()) == 1:
-                bitboard = unset(bitboard, position.row() - 1, position.column())
+    if position.row - 2 >= 0:
+        if get_bit(obstacle_bitboard, position.row - 2, position.column) == 1:
+            if get_bit(bitboard, position.row - 1, position.column) == 1:
+                bitboard = unset(bitboard, position.row - 1, position.column)
 
-    if position.column() - 2 >= 0:
-        if get_bit(obstacle_bitboard, position.row(), position.column() - 2) == 1:
-            if get_bit(bitboard, position.row(), position.column() - 1) == 1:
-                bitboard = unset(bitboard, position.row(), position.column() - 1)
+    if position.column - 2 >= 0:
+        if get_bit(obstacle_bitboard, position.row, position.column - 2) == 1:
+            if get_bit(bitboard, position.row, position.column - 1) == 1:
+                bitboard = unset(bitboard, position.row, position.column - 1)
 
-    if position.row() + 2 <= 8:
-        if get_bit(obstacle_bitboard, position.row() + 2, position.column()) == 1:
-            if get_bit(bitboard, position.row() + 1, position.column()) == 1:
-                bitboard = unset(bitboard, position.row() + 1, position.column())
+    if position.row + 2 <= 8:
+        if get_bit(obstacle_bitboard, position.row + 2, position.column) == 1:
+            if get_bit(bitboard, position.row + 1, position.column) == 1:
+                bitboard = unset(bitboard, position.row + 1, position.column)
 
-    if position.column() + 2 <= 8:
-        if get_bit(obstacle_bitboard, position.row(), position.column() + 2) == 1:
-            if get_bit(bitboard, position.row(), position.column() + 1) == 1:
-                bitboard = unset(bitboard, position.row(), position.column() + 1)
+    if position.column + 2 <= 8:
+        if get_bit(obstacle_bitboard, position.row, position.column + 2) == 1:
+            if get_bit(bitboard, position.row, position.column + 1) == 1:
+                bitboard = unset(bitboard, position.row, position.column + 1)
     return bitboard
