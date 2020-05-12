@@ -1,4 +1,5 @@
 class Position:
+    """Class that rappresent a Position on the board, formed by row and column."""
     def __init__(self, row, column):
         self.row = row
         self.column = column
@@ -10,12 +11,14 @@ class Position:
 
 
 class Action:
+    """Class that rappresent an Action on the board."""
     def __init__(self, start: Position, end: Position, role):
         self.start = start
         self.end = end
         self.role = role
 
     def to_server_format(self):
+        """Return the action in the format required by the server."""
         column_number_start = self.start.row + 1
         column_number_end = self.end.row + 1
         row_letter_start = chr(73 - self.start.column)

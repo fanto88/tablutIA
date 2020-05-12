@@ -9,6 +9,7 @@ class TablutState(State):
         super().__init__(color)
 
     def eat_king(self, action):
+        """Check if the king can be eat."""
         obstacle_bitboard = self.black_bitboard | self.king_bitboard | self.throne_bitboard | self.camps_bitboard
         # Se è sul Trono
         if self.king_position == Position(4, 4):
@@ -32,6 +33,7 @@ class TablutState(State):
             self.king_position = None
 
     def check_ended(self):
+        """Check if the game is ended."""
         # TODO: Da verificare che funzioni
         if self.king_position is None:
             self.winner = config.BLACK
@@ -47,6 +49,7 @@ class TablutState(State):
         return False
 
     def move(self, action: Action):
+        """Execute the action."""
         if action.role == config.WHITE:
             if bitboard_util.get_bit(self.white_bitboard, action.start.row, action.start.column) == 1:
                 self.white_bitboard = bitboard_util.set(self.white_bitboard, action.end.row,
