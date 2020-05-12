@@ -25,11 +25,9 @@ class Client(ConnectionHandler):
                 if self.color == state.turn:  # check if our turn or not
                     search = parallel_search.ParallelMinMax(3, 10, self.timeout - 5)
                     action = search.make_decision(state, TablutProblem())
-                    if action is not None:
-                        state.move(action)  # Execute the action
-                        self.send_string(action.to_server_format())  # send the action to the server
+                    self.send_string(action.to_server_format())  # send the action to the server
                 state = StateFactory().load_state_from_json(self.read_string(), self.color)  # Read the next state
-        except Exception as ex:
-            print(ex)
+        except Exception:
+            pass
         finally:
             print("Game Terminated - Closing Connection")

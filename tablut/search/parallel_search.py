@@ -61,14 +61,9 @@ class ParallelMinMax(MinMaxAgent):
         best_state = self._result[0][0]
         best_action = ''
         for state, action in state_action:
-            print(best_state, "|", state)
             if state == best_state:
                 best_action = action
-                break
-                #print("Master: risultato (stato, azione) ({state}, {action})".format(state=state, action=action))
-        print("AZIONE:" ,best_action, "TIPO:", type(best_action))
-        print("\n\n")
-        print("-------------")
+                print("Master: risultato (stato, azione) ({state}, {action})".format(state=state, action=action))
 
         return best_action
 

@@ -1,33 +1,39 @@
+from random import random
+
 from tablut.search.heuristic.strategies.strategy import HeuristicStrategy
 from tablut.utils import bitboard_util, config
 from tablut.utils.action import Position
 
-BLACK_PIECE_AROUND_KING_IN_THRONE = 1
+BLACK_PIECE_AROUND_KING_IN_THRONE = 4
 BLACK_PIECE_AROUND_KING = 5
 BLACK_GOOD_POSITION = 3
 KING_IN_WINNING_POSITION = 10
 KING_INSIDE_ESCAPE = 10000
 KING_EATED = 10000
 
+# TODO: Aggiungere un bonus per mangiare una pedina
 # La differenza tra le pedine vale 1 punto
+# TODO: Per controllare se, per esempio, il re è su un escape fare state.king_bitboard & state.escape_bitboard > 0 (da verificaare)
+# TODO: Trovare una soluzione per avere la posizione del re.. Posizione re dentro stato come variabile?
+# TODO: Per verificare che il re sia sul trono fare state.king_bitboard & state.throne_bitboard > 0 (da verificcare)
+# TODO: Cercare di togliere più roba che si può e usare operazioni bit sulle bitboard
 
 class RandomStrategy(HeuristicStrategy):
-    """min = 0
-    max = 10
-
-    def eval(self, state, player):
-        return secrets.randbelow(self.max+1)"""
-
     def eval(self, state, player):
         value = 0
-        if player == config.WHITE:
-            value += - self.black_pieces_around_king(state) - self.black_in_good_position(state) + (
-                    self.count_piece(state.white_bitboard | state.king_bitboard) - 1) * 2 - self.count_piece(
-                state.black_bitboard) + self.king_in_winning_position(state) + self.king_in_escape(state) - self.king_eated(state)
-        else:
-            value += self.black_pieces_around_king(state) + self.black_in_good_position(state) - (
-                    self.count_piece(state.white_bitboard | state.king_bitboard) - 1) * 2 + self.count_piece(
-                state.black_bitboard) - self.king_in_winning_position(state) - self.king_in_escape(state) + self.king_eated(state)
+        try:
+            if player == config.WHITE:
+                value += - self.black_pieces_around_king(state) - self.black_in_good_position(state) + (
+                        self.count_piece(state.white_bitboard | state.king_bitboard) - 1) * 2 - self.count_piece(
+                    state.black_bitboard) + self.king_in_winning_position(state) + self.king_in_escape(
+                    state) - self.king_eated(state)
+            else:
+                value += self.black_pieces_around_king(state) + self.black_in_good_position(state) - (
+                        self.count_piece(state.white_bitboard | state.king_bitboard) - 1) * 2 + self.count_piece(
+                    state.black_bitboard) - self.king_in_winning_position(state) - self.king_in_escape(
+                    state) + self.king_eated(state)
+        except Exception as e:
+            print(e)
         return value
 
     def black_pieces_around_king(self, state):
@@ -165,6 +171,6 @@ class RandomStrategy(HeuristicStrategy):
 
     def king_eated(self, state):
         if (state.king_bitboard[0] | state.king_bitboard[1] | state.king_bitboard[2] | state.king_bitboard[4] |
-                state.king_bitboard[5] | state.king_bitboard[6] | state.king_bitboard[7] | state.king_bitboard[8]) == 0:
+            state.king_bitboard[5] | state.king_bitboard[6] | state.king_bitboard[7] | state.king_bitboard[8]) == 0:
             return KING_EATED
         return 0

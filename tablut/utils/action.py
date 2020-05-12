@@ -1,4 +1,5 @@
-#TODO: Togliere i parametri con __ e mettere pubblici, togliere quindi anche i get
+# TODO: Togliere i parametri con __ e mettere pubblici, togliere quindi anche i get
+
 
 class Position:
     def __init__(self, row, column):
@@ -43,5 +44,9 @@ class Action:
         }
 
     def __repr__(self):
-        return "FROM: {:d}-{:d} TO: {:d}-{:d}".format(self.__start.row(), self.__start.column(), self.__end.row(),
-                                                      self.__end.column())
+        column_number_start = self.__start.row() + 1
+        column_number_end = self.__end.row() + 1
+        row_letter_start = chr(73 - self.__start.column())
+        row_letter_end = chr(73 - self.__end.column())
+        return "Action: {:s}-{:s}".format(str(row_letter_start) + str(column_number_start),
+                                          str(row_letter_end) + str(column_number_end))
