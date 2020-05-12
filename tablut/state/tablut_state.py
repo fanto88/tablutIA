@@ -1,20 +1,9 @@
-from copy import deepcopy
-
 import tablut.utils.bitboard_util as bitboard_util
 from tablut.state.state import State
 from tablut.utils import config
 from tablut.utils.action import Action, Position
 
 
-# TODO: Pulire il codice e renderlo il più veloce ed ottimizzato possibile. Togliere tutti i for per esempio
-# TODO: Dove si fa il controllo se mangia qualcosa?
-# TODO: Come faccio a modificare direttamente self.__white_bitboard??? dentro move
-# TODO: Fare la funzione che mangia le varie pedine e il re
-# TODO: Forse muore quando cambio la bitboard del re perchè fa il check della vittoria
-# TODO: Funzione per contare quante pedine una pedina ha intorno
-# TODO: Capire come controllare se hai una pedina da un lato e una dall'altro
-# TODO: If any al posto di tutte le righe in OR nella funzione check_ended
-# TODO: Ma se quando muore il re mettessi None? Mi basta fare il controllo dopo, se è none allora è morto
 class TablutState(State):
     def __init__(self, color):
         super().__init__(color)
