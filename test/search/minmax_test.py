@@ -22,5 +22,5 @@ if __name__ == '__main__':
     search = s.ParallelMinMax(2, 2, 20)
     action = search.make_decision(8, Problem())
     nodes_expanded = search.node_expanded
-    print(action)
+    print(action, search.max_depth)
     #print(nodes_expanded)

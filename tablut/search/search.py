@@ -17,10 +17,12 @@ class MinMaxAgent:
         # TODO: DA ELIMINARE ASSOLUTAMENTE
         self.h = random.RandomStrategy()
 
-    def choose_action(self, state, problem, maximize=True):
+    def choose_action(self, state, problem, maximize=True, max_depth=None):
         self.node_expanded = 0
         self.node_skipped = 0
         self.timer = time.time()
+        if max_depth:
+            self.max_depth = max_depth
 
         eval_score = self._minimax(Node(state), problem, maximize, float('-inf'), float('inf'))
         return eval_score
@@ -37,7 +39,7 @@ class MinMaxAgent:
     # TODO: si può provare a ottimizzare l'algoritmo e non restituire per ogni stato (valore, azione) ma solo valore
     # TODO: se fai quanto detto sopra, potresti togliere i nodi
     def _minimax(self, node, problem, maximize, alpha, beta):
-
+        print("(stato, profondità): ({}, {})".format(node.state, node.depth))
         # Ricerca termina se:
         #   -E' uno stato terminale
         #   -Il tempo è scaduto
@@ -89,8 +91,8 @@ class MinMaxAgent:
 
     # TODO: modifica l'euristica che viene utilizzata
     def utility(self, state, problem):
-        return problem.value(state, state.turn) if problem.goal_test(state) \
-            else self.h.eval(state, problem.turn_player(state))
+        return problem.value(state, 0)#state.turn) if problem.goal_test(state) \
+            #else self.h.eval(state, problem.turn_player(state))
 
     def terminal_test(self, state, problem):
         return problem.goal_test(state)

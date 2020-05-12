@@ -8,9 +8,8 @@ import operator
 class ParallelMinMax(MinMaxAgent):
 
     def __init__(self, process_no, max_depth, max_time):
-        super(ParallelMinMax, self).__init__(max_depth-1, max_time)
+        super(ParallelMinMax, self).__init__(max_depth, max_time)
         self.process_no = process_no
-        self.jobs = []
 
         # Process-safe structures
         manager = Manager()
@@ -18,7 +17,9 @@ class ParallelMinMax(MinMaxAgent):
         self.checked = manager.dict()
 
     def make_decision(self, state, problem, maximize=True):
-        self.node_expanded = 0
+        # Clear structs
+        self._result[:] = []
+        self.checked.clear()
 
         # Obtaining all child states, starting from the given one
         list_actions = self.possible_actions(state, problem)
@@ -32,31 +33,19 @@ class ParallelMinMax(MinMaxAgent):
         cut_first_level_states = list(chunks(first_level_states, cut))
 
         # Preparing workers
-        self.jobs = [Process(target=self._worker, args=(states, len(first_level_states), problem, not maximize, self._result))
+        jobs = [Process(target=self._worker, args=(states, len(first_level_states), problem, not maximize, self._result))
                             for states in cut_first_level_states]
 
         # Start workers
-        [p.start() for p in self.jobs]
+        [p.start() for p in jobs]
 
         # Wait for workers
-        [p.join() for p in self.jobs]
-
-        # Visto che questa classe ottiene gli stati di profondità 1 e ai sottoprocessi viene passata
-        # profondità massima ridotta di 1
-        self.max_depth += 1
+        [p.join() for p in jobs]
 
         # self._result contains couples (first_level_state, value) obtained by child processors
         # sorting the list by value means the first couple (state, value) is the best one
         self._result.sort(key=operator.itemgetter(1), reverse=maximize)
-        #print("----------------------------------")
-        #print(self._result)
-        #print(list(zip(first_level_states, list_actions)))
 
-        # list(zip(first_level_states, list_actions)) is list of couples (first_level_state, action_to_reach_that_state)
-        # filter is used to obtain the best action, using the best state (first element of self._result) as key
-        # the final result is a list with a single element [(best_state, best_action)]
-        #best_action = list(filter(lambda x: x[0] == self._result[0][0],
-                                  #list(zip(first_level_states, list_actions))))[0][1]
         state_action = zip(first_level_states, list_actions)
         best_state = self._result[0][0]
         best_action = ''
@@ -73,7 +62,7 @@ class ParallelMinMax(MinMaxAgent):
         self.max_time = self.max_time/total_states
 
         # Utility value of each state inside "states" list
-        values = [self.choose_action(state, problem, maximize=maximize) for state in states]
+        values = [self.choose_action(state, problem, maximize=maximize, max_depth=self.max_depth-1) for state in states]
 
         # Couples (state, value)
         partial_result = list(zip(states, values))
