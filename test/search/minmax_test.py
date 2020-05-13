@@ -19,8 +19,8 @@ class Problem:
 
 
 if __name__ == '__main__':
-    search = s.ParallelMinMax(2, 2, 20)
+    search = s.ParallelMinMax(2, 5, 20)
     action = search.make_decision(8, Problem())
     nodes_expanded = search.node_expanded
-    print(action, search.max_depth)
+    print(action, search.max_depth, search.node_skipped)
     #print(nodes_expanded)

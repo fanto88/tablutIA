@@ -4,7 +4,7 @@ from tablut.search.heuristic.strategies.strategy import HeuristicStrategy
 from tablut.utils import bitboard_util, config
 from tablut.utils.action import Position
 
-BLACK_PIECE_AROUND_KING_IN_THRONE = 0.04
+BLACK_PIECE_AROUND_KING_IN_THRONE = 400
 BLACK_PIECE_AROUND_KING = 500
 BLACK_GOOD_POSITION = 0.03
 KING_IN_WINNING_POSITION = 0.1

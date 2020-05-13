@@ -25,7 +25,7 @@ class MinMaxAgent:
         actions_values.sort(key=operator.itemgetter(1), reverse=maximize)
         return actions_values[0] if actions_values else []
 
-    def choose_action(self, state, problem, maximize=True, max_depth=None):
+    def choose_action(self, state, problem, maximize=True, max_depth=None, start_depth=0):
         self.timer = time.time()
         if self.terminal_test(state, problem):
             return self.utility(state, problem)
@@ -42,7 +42,9 @@ class MinMaxAgent:
         states = [self.resulting_state(state, action, problem) for action in actions]
 
         # Utility value, for each state
-        eval_scores = [self._minimax(Node(st), problem, not maximize, float('-inf'), float('inf')) for st in states]
+        first = Node(state)
+        first.depth = start_depth
+        eval_scores = [self._minimax(Node(st, first), problem, not maximize, float('-inf'), float('inf')) for st in states]
 
         # Obtaining best action
         best_action, best_value = self._best(list(zip(actions, eval_scores)), maximize)
@@ -68,7 +70,7 @@ class MinMaxAgent:
         #   -Il tempo è scaduto
         #   -Non voglio più espandere l'albero
         #print("Secondi passati:", time.time() - self.timer)
-        if node.depth == self.max_depth \
+        if node.depth >= self.max_depth \
                 or self.terminal_test(node.state, problem) \
                 or (time.time() - self.timer) >= self.max_time:
             values = self.utility(node.state, problem)
