@@ -37,7 +37,6 @@ class MinMaxAgent:
 
         # All possible actions applicable in the given state
         actions = self.possible_actions(state, problem)
-
         # Child states of the given one
         states = [self.resulting_state(state, action, problem) for action in actions]
 
@@ -45,6 +44,7 @@ class MinMaxAgent:
         first = Node(state)
         first.depth = start_depth
         eval_scores = [self._minimax(Node(st, first), problem, not maximize, float('-inf'), float('inf')) for st in states]
+
 
         # Obtaining best action
         best_action, best_value = self._best(list(zip(actions, eval_scores)), maximize)
@@ -70,6 +70,7 @@ class MinMaxAgent:
         #   -Il tempo è scaduto
         #   -Non voglio più espandere l'albero
         #print("Secondi passati:", time.time() - self.timer)
+
         if node.depth >= self.max_depth \
                 or self.terminal_test(node.state, problem) \
                 or (time.time() - self.timer) >= self.max_time:
@@ -116,8 +117,8 @@ class MinMaxAgent:
 
     # TODO: modifica l'euristica che viene utilizzata
     def utility(self, state, problem):
-        return problem.value(state, 0)#state.turn) if problem.goal_test(state) \
-            #else self.h.eval(state, problem.turn_player(state))
+        return problem.value(state, state.turn) if problem.goal_test(state) \
+            else self.h.eval(state, problem.turn_player(state))
 
     def terminal_test(self, state, problem):
         return problem.goal_test(state)
