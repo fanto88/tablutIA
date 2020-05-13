@@ -2,6 +2,7 @@ from copy import deepcopy
 
 from tablut.state.tablut_state import TablutState
 from tablut.utils import config
+from tablut.utils.action import Position
 
 
 class StateFactory:
@@ -24,6 +25,7 @@ class StateFactory:
                     state.black_bitboard[row_index] |= 1 << column_index
                 elif column == "KING":
                     state.king_bitboard[row_index] |= 1 << column_index
+                    state.king_position = Position(row_index, column_index)
                 column_index -= 1
             row_index += 1
         return state
@@ -34,6 +36,8 @@ class StateFactory:
         new_state = deepcopy(state)
         new_state = new_state.move(action)
         new_state.winner = new_state.check_ended()
+        if new_state.check_ended():
+            print(new_state.turn, " POTREBBE VINCERE CON MOSSA: ", action)
         if new_state.turn == config.WHITE:
             new_state.turn = config.BLACK
         else:

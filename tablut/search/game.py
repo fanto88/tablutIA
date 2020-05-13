@@ -56,13 +56,20 @@ class TablutProblem(Game):
 
     def value(self, state, player):  # TODO: implement
         winner = state.winner
-        if not winner:
-            return 0
-
-        elif winner == player:
-            return 1
+        if player == config.WHITE:
+            if not winner:
+                return 0
+            elif winner == player:
+                return -1000000
+            else:
+                return 1000000
         else:
-            return -1
+            if not winner:
+                return 0
+            elif winner == player:
+                return 1000000
+            else:
+                return -1000000
 
     def process_action(self, state, action):
         return StateFactory.load_state_from_action(state, action)

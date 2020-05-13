@@ -30,7 +30,8 @@ class TablutState(State):
         else:
             obstacle_bitboard = self.king_bitboard | self.black_bitboard | self.throne_bitboard | self.camps_bitboard
             self.king_bitboard = bitboard_util.eat(self.king_bitboard, obstacle_bitboard, action.end)
-            self.king_position = None
+            if bitboard_util.count_piece(self.king_bitboard) == 0:
+                self.king_position = None
 
     def check_ended(self):
         """Check if the game is ended."""

@@ -1,5 +1,6 @@
 class Position:
     """Class that rappresent a Position on the board, formed by row and column."""
+
     def __init__(self, row, column):
         self.row = row
         self.column = column
@@ -9,9 +10,13 @@ class Position:
             return True
         return False
 
+    def __repr__(self):
+        return "RIGA: {:d} COLONNA:{:d}".format(self.row, self.column)
+
 
 class Action:
     """Class that rappresent an Action on the board."""
+
     def __init__(self, start: Position, end: Position, role):
         self.start = start
         self.end = end
