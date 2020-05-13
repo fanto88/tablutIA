@@ -1,4 +1,5 @@
 from tablut.search import parallel_search as s
+from tablut.search import search as single_process
 
 
 class Problem:
@@ -9,7 +10,7 @@ class Problem:
         return False
 
     def value(self, state, lol):  # TODO: implement
-        return state
+        return -state
 
     def process_action(self, state, action):
         return state - action
@@ -19,8 +20,8 @@ class Problem:
 
 
 if __name__ == '__main__':
-    search = s.ParallelMinMax(2, 5, 20)
-    action = search.make_decision(8, Problem())
+    search = single_process.MinMaxAgent(3, 20)
+    action = search.choose_action(8, Problem())
     nodes_expanded = search.node_expanded
     print(action, search.max_depth, search.node_skipped)
     #print(nodes_expanded)
