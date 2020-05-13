@@ -1,5 +1,7 @@
 import numpy
 
+from tablut.utils.action import Position
+
 
 class State:
     """Class that contain the all the States bitboard and their initialization."""
@@ -13,6 +15,7 @@ class State:
         self.throne_bitboard = numpy.empty(shape=9, dtype=int)
         self.turn = color
         self.winner = ""
+        self.king_position = Position(4, 4)
 
         # Initialize Escape Bitboard
         self.escape_bitboard[0] = 0b011000110

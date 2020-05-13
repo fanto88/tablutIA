@@ -1,4 +1,4 @@
-import tablut.utils.action_factory as action_factory
+from tablut.utils.action_factory import ActionFactory
 from tablut.state.state_factory import StateFactory
 from tablut.utils import config
 
@@ -49,7 +49,7 @@ class TablutProblem(Game):
     """
 
     def actions(self, state):   # TODO: implement
-        return action_factory.all_available_actions(state)
+        return ActionFactory.all_available_actions(state)
 
     def goal_test(self, state):  # TODO: implement
         return state.check_ended()
