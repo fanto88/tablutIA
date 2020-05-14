@@ -1,14 +1,14 @@
 from multiprocessing import (Process, Manager, Value)
-from tablut.search.search import MinMaxAgent
+from tablut.search.search import SearchAgent
 
 import os
 import operator
 
 
-class ParallelMinMax(MinMaxAgent):
+class ParallelSearch(SearchAgent):
 
     def __init__(self, process_no, max_depth, max_time):
-        super(ParallelMinMax, self).__init__(max_depth, max_time)
+        super(ParallelSearch, self).__init__(max_depth, max_time)
         self.process_no = process_no
 
         # Process-safe structures

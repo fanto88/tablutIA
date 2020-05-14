@@ -1,19 +1,57 @@
 from tablut.search.tree import Node
+from multiprocessing import Value
 import time
 import os
 from tablut.search.heuristic.strategies import random
 import operator
 
 
-class MinMaxAgent:
+class SearchMetric:
 
-    def __init__(self, max_depth, max_time):
-        self.max_depth = max_depth
-        self.node_expanded = 0
-        self.max_time = max_time
-        self.checked = dict()
+    def __init__(self):
+        self.node_expandend = 0
         self.node_skipped = 0
+        self.checked = dict()
+        self.start_time = 0.0
+        self.end_time = 0.0
+
+    def start(self):
+        self.start_time = time.time()
+
+    def stop(self):
+        self.end_time = time.time()
+
+    def results(self):
+        return self.node_expandend, self.node_skipped, self.time_elapsed()
+
+    def time_elapsed(self):
+        return self.end_time - self.start_time
+
+    def __repr__(self):
+        return "<{name}> Nodi espansi:{ne} " \
+               "Nodi saltati:{ns} " \
+               "Tempo:{t}".format(name=self.__class__.__name__,ne=self.node_expandend, ns=self.node_skipped,
+                                  t=self.time_elapsed())
+
+
+class ParallelSearchMetric(SearchMetric):
+    def __init__(self):
+        super(ParallelSearchMetric, self).__init__()
+        self.node_expandend = Value('i', 0)
+
+
+class SearchAgent:
+
+    def __init__(self, max_depth, max_time, checked_nodes=None):
+        self.max_depth = max_depth
+        self.max_time = max_time
+        self.node_expandend = 0
+        self.node_skipped = 0
+        self.checked = dict()
         self.timer = 0.0
+
+        if checked_nodes:
+            self.checked = checked_nodes
 
         # TODO: DA ELIMINARE ASSOLUTAMENTE
         self.h = random.RandomStrategy()
@@ -22,18 +60,29 @@ class MinMaxAgent:
         """Returns the first "action" in the given list,
         ordered by "values" Ascendant or Descendant, depending on "maximize" var."""
 
-        actions_values.sort(key=operator.itemgetter(1), reverse=maximize)
-        return actions_values[0] if actions_values else []
+        if not actions_values:
+            return (None, float('inf')) if maximize else (None, float('-inf'))
 
-    def choose_action(self, state, problem, maximize=True, max_depth=None, start_depth=0):
+        actions_values.sort(key=operator.itemgetter(1), reverse=maximize)
+
+        if actions_values[0][1] in (float('inf'), float('-inf')):
+            return (None, float('inf')) if maximize else (None, float('-inf'))
+
+        return actions_values[0]
+
+    def choose_action(self, state, problem, maximize=True, max_depth=None, max_time=None, start_depth=0):
         self.timer = time.time()
+
         if self.terminal_test(state, problem):
-            return self.utility(state, problem)
+            return None, self.utility(state, problem)
 
         self.node_expanded = 0
         self.node_skipped = 0
         if max_depth:
             self.max_depth = max_depth
+
+        if max_time:
+            self.max_time = max_time
 
         # All possible actions applicable in the given state
         actions = self.possible_actions(state, problem)
@@ -47,9 +96,9 @@ class MinMaxAgent:
         eval_scores = [self._minimax(Node(st, first), problem, not maximize, float('-inf'), float('inf')) for st in states]
 
         # Obtaining best action
-        best_action, best_value = self._best(list(zip(actions, eval_scores)), maximize)
-
-        return best_action, best_value
+        bestaction_bestvalue = self._best(list(filter(lambda x: x[1] not in (float('inf'), float('-inf')),
+                                                                             zip(actions, eval_scores))), maximize)
+        return bestaction_bestvalue
 
     def _already_checked(self, state):
         #print("(stato, stati_computati):{}".format(state, self.checked))
@@ -70,7 +119,6 @@ class MinMaxAgent:
         #   -Il tempo è scaduto
         #   -Non voglio più espandere l'albero
         #print("Secondi passati:", time.time() - self.timer)
-        print("(stato, depth)", node.state, node.depth)
         if node.depth >= self.max_depth \
                 or self.terminal_test(node.state, problem) \
                 or (time.time() - self.timer) >= self.max_time:
@@ -80,11 +128,11 @@ class MinMaxAgent:
             return values
 
         # Controlla se lo stato corrente è già stato elaborato
-        if self._already_checked(node.state):
+        """if self._already_checked(node.state):
             self.node_skipped += 1
             return float('-inf') if not maximize else float('inf')
         else:
-            self._mark_checked(node.state)
+            self._mark_checked(node.state)"""
 
         self.node_expanded += 1
         value = float('-inf') if maximize else float('inf')
@@ -122,3 +170,8 @@ class MinMaxAgent:
 
     def terminal_test(self, state, problem):
         return problem.goal_test(state)
+
+
+def utility(state, problem):
+    return problem.value(state, state.turn) if problem.goal_test(state) \
+        else random.RandomStrategy().eval(state, problem.turn_player(state))
