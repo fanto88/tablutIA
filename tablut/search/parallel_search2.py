@@ -45,21 +45,18 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth, 
                     args=(states, problem, not maximize, max_depth, max_time/num_states, results))
             for states in cut_first_level_states]
 
-    print("Cut:", cut)
     # Start workers
     [p.start() for p in jobs]
 
     # Wait for workers
     [p.join() for p in jobs]
 
-    print("\nRisultati:")
     # Cleaning results from empty lists
 
     state_actions = list(zip(first_level_states, list_actions))
 
     results.sort(key=operator.itemgetter(1), reverse=maximize)
 
-    print(results)
     best_state = results[0][0]
     best_value = results[0][1]
 
