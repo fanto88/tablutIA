@@ -38,8 +38,6 @@ class StateFactory:
         new_state = deepcopy(state)
         new_state = new_state.move(action)
         new_state.winner = new_state.check_ended()
-        if new_state.check_ended():
-            print(new_state.turn, " POTREBBE VINCERE CON MOSSA: ", action)
         if new_state.turn == config.WHITE:
             new_state.turn = config.BLACK
         else:
