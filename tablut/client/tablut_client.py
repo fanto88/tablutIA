@@ -27,7 +27,6 @@ class Client(ConnectionHandler):
         while True:  # Game loop
             if self.color == state.turn:  # check if our turn or not
                 action, value = parallel_search2.choose_action(3, state, TablutProblem(), self.timeout - 5, 10, start_as_max)
-                print("ESEGUO MOSSA: ", action)
                 self.send_string(action.to_server_format())  # send the action to the server
             state = StateFactory().load_state_from_json(self.read_string(), self.color)  # Read the next state
 """        except Exception as e:

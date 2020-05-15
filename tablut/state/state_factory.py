@@ -37,7 +37,7 @@ class StateFactory:
         """Create a new State based on the action."""
         new_state = deepcopy(state)
         new_state = new_state.move(action)
-        new_state.winner = new_state.check_ended()
+        new_state.check_ended()
         if new_state.turn == config.WHITE:
             new_state.turn = config.BLACK
         else:
