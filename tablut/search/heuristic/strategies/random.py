@@ -4,18 +4,14 @@ from tablut.utils.action import Position
 
 BLACK_PIECE_AROUND_KING_IN_THRONE_OR_ADJACENT = 2
 BLACK_PIECE_AROUND_KING = 4
-BLACK_GOOD_POSITION = 10
+BLACK_GOOD_POSITION = 6
 KING_IN_WINNING_POSITION = 5000
 PIECE_ATE = 2
 WHITE_IN_STRATEGIC_PLACE = 4
 USELESS_BLACK_POSITION = 0.5
 
-
-# TODO: Verificare che king_in_winning_position funzioni correttamente
-# TODO: Cercare di togliere più roba che si può e usare operazioni bit sulle bitboard
-# TODO: Il bianco ha fatto una mossa per cui poteva essere mangiato
-# TODO: Avvicinarsi al re ha senso se dall'altro lato è libero e quindi vulnerabile, altrimenti sicuramente ci sono mosse migliori
-# TODO: Se può mangiare più pedine uccidere quella che si mette negli angoli dei campi, tra la pedina più avanti e l'altra
+# TODO: Ho effettauto alcune modifiche e vedere come si comporta contro tutti gli altri ora partendo da Fede:
+#       Provare a diminuire good position, troppo difensivo o ad aumentare il bonus per uccisione e vicino al re
 
 def useless_black_position(state):
     value = 0
@@ -72,7 +68,6 @@ def useless_black_position(state):
 
 def white_in_good_position(state):
     value = 0
-    # BLACK_GOOD_POSITION = [X, X, X, X]  # Top left, Top right, Bottom Left, Bottom Right
     if bitboard_util.get_bit(state.white_bitboard, 1, 3):
         value += WHITE_IN_STRATEGIC_PLACE
     if bitboard_util.get_bit(state.white_bitboard, 1, 5):
@@ -234,13 +229,55 @@ class RandomStrategy(HeuristicStrategy):
             if state.king_position == Position(5, 4):
                 multiplier = BLACK_PIECE_AROUND_KING_IN_THRONE_OR_ADJACENT
 
-            #TODO: La versione senza bug, senza 0.25*pawns_difference e senza useless_black_position Pareggia
-            #TODO: La versione senza bug, con 0.25*pawns_difference e senza useless_black_position Vince
+
+            """                      
+            Team imbattuti:
+                Pelle
+                ColishTablut
+                Existential_Tablut
+                Tablut2
+                TablutAI
+                TablutChallenge
+                Tablut - java -jar dist/StudentPlayer.jar white
+                Fede -  ./osarracino white
+                AiTeamTablut 2019 - python3 AITeam.py Colore 
+                NorsemanTablut - java -jar Tablut/Executables/TablutAIClient.jar White 60 localhost - Vittoria per Timeout
+                Tablut_client - python3 src/client.py White 60 'localhost' (Aggressivo)
+                TablutPlayer_Capitano - python3.7 Client.py White 60 'localhost' - Vittoria per Timeout
+                
+                
+            BALANCED PROFILE:
+                Ha vinto contro:
+                    
+                Ha perso contro: 
+                
+                Ha pareggiato contro:
+                
+                    
+                PARAMETRI:  
+                    BLACK_PIECE_AROUND_KING_IN_THRONE_OR_ADJACENT = 2
+                    BLACK_PIECE_AROUND_KING = 4
+                    BLACK_GOOD_POSITION = 10
+                    KING_IN_WINNING_POSITION = 5000
+                    PIECE_ATE = 2
+                    WHITE_IN_STRATEGIC_PLACE = 4
+                    USELESS_BLACK_POSITION = 0.5
+                
+                VALUE FUNCTION:
+                    pawns_difference = state.black_count - state.white_count * 2
+                    multiplier += 0.25 * pawns_difference
+                    value += bitboard_util.count_adjacent(state.king_position, state.black_bitboard) * multiplier
+                    value += black_in_good_position(state)
+                    value += pawns_difference * (PIECE_ATE + 0.15 * pawns_difference)
+                    value -= king_in_winning_position(state)
+                    value -= white_in_good_position(state)
+            """
+
             pawns_difference = state.black_count - state.white_count * 2
-            multiplier += 0.25 * pawns_difference
+            multiplier += 0.4 * pawns_difference
             value += bitboard_util.count_adjacent(state.king_position, state.black_bitboard) * multiplier
             value += black_in_good_position(state)
-            value += pawns_difference * (PIECE_ATE + 0.15 * pawns_difference)
+            value += pawns_difference * (PIECE_ATE + 0.3 * pawns_difference)
             value -= king_in_winning_position(state)
             value -= white_in_good_position(state)
             #value -= useless_black_position(state)
