@@ -21,8 +21,10 @@ class StateFactory:
             for column in row:
                 if column == "WHITE":
                     state.white_bitboard[row_index] |= 1 << column_index
+                    state.white_count += 1
                 elif column == "BLACK":
                     state.black_bitboard[row_index] |= 1 << column_index
+                    state.black_count += 1
                 elif column == "KING":
                     state.king_bitboard[row_index] |= 1 << column_index
                     state.king_position = Position(row_index, column_index)

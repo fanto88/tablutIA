@@ -49,23 +49,25 @@ def count_adjacent(position, obstacle_bitboard):
 
 def eat(bitboard, obstacle_bitboard, position):
     """Check if you can eat a normal Pawn and return the bitboard without the pawn ate."""
+    result = False
     if position.row - 2 >= 0:
         if get_bit(obstacle_bitboard, position.row - 2, position.column) == 1:
             if get_bit(bitboard, position.row - 1, position.column) == 1:
                 bitboard = unset(bitboard, position.row - 1, position.column)
-
+                result = True
     if position.column - 2 >= 0:
         if get_bit(obstacle_bitboard, position.row, position.column - 2) == 1:
             if get_bit(bitboard, position.row, position.column - 1) == 1:
                 bitboard = unset(bitboard, position.row, position.column - 1)
-
+                result = True
     if position.row + 2 <= 8:
         if get_bit(obstacle_bitboard, position.row + 2, position.column) == 1:
             if get_bit(bitboard, position.row + 1, position.column) == 1:
                 bitboard = unset(bitboard, position.row + 1, position.column)
-
+                result = True
     if position.column + 2 <= 8:
         if get_bit(obstacle_bitboard, position.row, position.column + 2) == 1:
             if get_bit(bitboard, position.row, position.column + 1) == 1:
                 bitboard = unset(bitboard, position.row, position.column + 1)
-    return bitboard
+                result = True
+    return bitboard, result

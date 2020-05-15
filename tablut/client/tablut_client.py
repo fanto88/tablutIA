@@ -1,10 +1,8 @@
 import tablut.utils.config as config
 from tablut.client.connection_handler import ConnectionHandler
-from tablut.search import parallel_search
-from tablut.search.search import MinMaxAgent
+from tablut.search import parallel_search2
 from tablut.search.game import TablutProblem
 from tablut.state.state_factory import StateFactory
-from tablut.utils import bitboard_util
 
 
 class Client(ConnectionHandler):
@@ -28,12 +26,8 @@ class Client(ConnectionHandler):
             start_as_max = False
         while True:  # Game loop
             if self.color == state.turn:  # check if our turn or not
-                #search = parallel_search.ParallelMinMax(1, 1, self.timeout - 5)
-                #action = search.make_
-                # decision(state, TablutProblem())
-                minmax = MinMaxAgent(10, self.timeout - 5)
-                action, value = minmax.choose_action(state, TablutProblem(), start_as_max)
-                print("ESEGUO AZIONE ", action, " CON VALORE ", value)
+                action, value = parallel_search2.choose_action(3, state, TablutProblem(), self.timeout - 5, 10, start_as_max)
+                print("ESEGUO MOSSA: ", action)
                 self.send_string(action.to_server_format())  # send the action to the server
             state = StateFactory().load_state_from_json(self.read_string(), self.color)  # Read the next state
 """        except Exception as e:

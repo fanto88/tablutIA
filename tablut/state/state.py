@@ -14,6 +14,8 @@ class State:
         self.camps_bitboard = numpy.empty(shape=9, dtype=int)
         self.throne_bitboard = numpy.empty(shape=9, dtype=int)
         self.turn = color
+        self.black_count = 0
+        self.white_count = 0
         self.winner = ""
         self.king_position = Position(4, 4)
 
