@@ -2,13 +2,13 @@ from tablut.search.heuristic.strategies.strategy import HeuristicStrategy
 from tablut.utils import bitboard_util
 from tablut.utils.action import Position
 
-BLACK_PIECE_AROUND_KING_IN_THRONE_OR_ADJACENT = 2
-BLACK_PIECE_AROUND_KING = 4
-BLACK_GOOD_POSITION = 6
+BLACK_PIECE_AROUND_KING_IN_THRONE_OR_ADJACENT = 1
+BLACK_PIECE_AROUND_KING = 1
+BLACK_GOOD_POSITION = 1
 KING_IN_WINNING_POSITION = 5000
-PIECE_ATE = 2
-WHITE_IN_STRATEGIC_PLACE = 4
-USELESS_BLACK_POSITION = 0.5
+PIECE_ATE = 6
+WHITE_IN_STRATEGIC_PLACE = 2
+
 
 def white_in_good_position(state):
     value = 0
@@ -173,13 +173,12 @@ class RandomStrategy(HeuristicStrategy):
             if state.king_position == Position(5, 4):
                 multiplier = BLACK_PIECE_AROUND_KING_IN_THRONE_OR_ADJACENT
 
-
             """                      
             Team imbattuti:
 
-                
-                
-                
+
+
+
             BALANCED PROFILE:
                 Ha vinto contro:
                 Fede -  ./osarracino white
@@ -188,15 +187,15 @@ class RandomStrategy(HeuristicStrategy):
                 Existential_Tablut - ./runmyplayer White 60 'localhost'
                 NorsemanTablut - java -jar Tablut/Executables/TablutAIClient.jar White 60 localhost - Vittoria per Timeout
                 TablutPlayer_Capitano - python3.7 Client.py White 60 'localhost' - Vittoria per Timeout
-                    
+
                 Ha perso contro: 
                 Pelle - java -jar bin/pelle -p w
                 Tablut - java -jar dist/StudentPlayer.jar white
                 Tablut_client - python3 src/client.py White 60 'localhost'
-                
+
                 Ha pareggiato contro:
-                
-                    
+
+
                 PARAMETRI:  
                     BLACK_PIECE_AROUND_KING_IN_THRONE_OR_ADJACENT = 2
                     BLACK_PIECE_AROUND_KING = 4
@@ -205,7 +204,7 @@ class RandomStrategy(HeuristicStrategy):
                     PIECE_ATE = 2
                     WHITE_IN_STRATEGIC_PLACE = 4
                     USELESS_BLACK_POSITION = 0.5
-                
+
                 VALUE FUNCTION:
                     pawns_difference = state.black_count - state.white_count * 2
                     multiplier += 0.4 * pawns_difference
@@ -217,10 +216,12 @@ class RandomStrategy(HeuristicStrategy):
             """
 
             pawns_difference = state.black_count - state.white_count * 2
-            multiplier += 0.4 * pawns_difference
-            value += bitboard_util.count_adjacent(state.king_position, state.black_bitboard) * multiplier
+            multiplier += 3 * pawns_difference
+            if multiplier <= 0:
+                multiplier = 1
+            value += bitboard_util.count_adjacent(state.king_position, state.black_bitboard) + multiplier
             value += black_in_good_position(state)
-            value += pawns_difference * (PIECE_ATE + 0.3 * pawns_difference)
+            value += PIECE_ATE * multiplier
             value -= king_in_winning_position(state)
             value -= white_in_good_position(state)
             return value
