@@ -64,6 +64,11 @@ class ActionFactory:
                             column = 8 - column_index
                             new_obstacle_bitboard = bitboard_util.set(new_obstacle_bitboard, row_index, column)
 
+                        elif (row_index == 0 or row_index == 8) & (column_index == 4):
+                            new_obstacle_bitboard = new_obstacle_bitboard
+
+                        elif (row_index == 4) & (column_index == 0 or column_index == 8):
+                            new_obstacle_bitboard = new_obstacle_bitboard
                         else:
                             new_obstacle_bitboard |= state.camps_bitboard
                         actions += ActionFactory.get_available_actions_for_pawn(Position(row_index, column_index),
