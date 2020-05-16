@@ -17,6 +17,8 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth, 
         for i in range(0, len(lst), n):
             yield lst[i:i + n]
 
+
+
     # Body
     if process_no == 1:
         o = SearchAgent(max_depth, max_time)
@@ -24,7 +26,7 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth, 
 
     # Check if terminal
     if terminal_test(state):
-        return problem.value(state, state.turn) if problem.goal_test(state) else utility(state, problem)
+        return ('123', problem.value(state, state.turn)) if problem.goal_test(state) else ('1234', utility(state, problem))
 
     # Obtaining all child states, starting from the given one
     list_actions = problem.actions(state)
@@ -54,7 +56,6 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth, 
     # Cleaning results from empty lists
 
     state_actions = list(zip(first_level_states, list_actions))
-
     results.sort(key=operator.itemgetter(1), reverse=maximize)
 
     best_state = results[0][0]
@@ -67,6 +68,9 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth, 
             best_action = action
             break
 
+    if not best_action:
+        print("Best S, Best A", best_state, best_action)
+        print("States:", first_level_states)
     return best_action, best_value
 
 
@@ -74,7 +78,7 @@ def run(states, problem, maximize, max_depth, time, out):
     o = SearchAgent(max_depth, max_time=time)
     print("<PID {}> stati {} tempo per stato {} tempo totale {}".format(os.getpid(), len(states),
                                                                         round(time, 3),
-                                                                        round(time*len(states), 3)))
+                                                                        round(time * len(states), 3)))
 
     child_results = [o.choose_action(st, problem, maximize, start_depth=1) for st in states]
 
@@ -85,6 +89,7 @@ def run(states, problem, maximize, max_depth, time, out):
     state_values = list(zip(states, values))
 
     # Adding results to shared structure
+    #print("<PID {}> Aggiungo a {} (stato, valore) {}".format(os.getpid(), out, state_values))
     out += state_values
 
     print("<PID {}> FINE".format(os.getpid()))

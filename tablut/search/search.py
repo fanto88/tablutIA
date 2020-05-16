@@ -74,7 +74,7 @@ class SearchAgent:
         self.timer = time.time()
 
         if self.terminal_test(state, problem):
-            return None, self.utility(state, problem)
+            return ("None", self.utility(state, problem))
 
         self.node_expanded = 0
         self.node_skipped = 0
