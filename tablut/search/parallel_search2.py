@@ -1,9 +1,9 @@
-from multiprocessing import Pool, Process, Manager
+from multiprocessing import Process, Manager
 from tablut.search.search import SearchAgent, utility
 from tablut.state.tablut_state import TablutState
-from tablut.utils.action import Action
 import operator
 import os
+import time
 
 
 def choose_action(process_no, state: TablutState, problem, max_time, max_depth, maximize=True, start_depth=0):
@@ -44,7 +44,7 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth, 
     # Workers
     results = Manager().list()
     jobs = [Process(target=run,
-                    args=(states, problem, not maximize, max_depth, max_time/num_states, results))
+                    args=(states, problem, not maximize, max_depth, max_time, results))
             for states in cut_first_level_states]
 
     # Start workers
@@ -74,13 +74,15 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth, 
     return best_action, best_value
 
 
-def run(states, problem, maximize, max_depth, time, out):
-    o = SearchAgent(max_depth, max_time=time)
+def run(states, problem, maximize, max_depth, max_time, out):
+    o = SearchAgent(max_depth, max_time=max_time)
     print("<PID {}> stati {} tempo per stato {} tempo totale {}".format(os.getpid(), len(states),
-                                                                        round(time, 3),
-                                                                        round(time * len(states), 3)))
+                                                                        round(max_time/len(states), 3),
+                                                                        round(max_time, 3)))
 
-    child_results = [o.choose_action(st, problem, maximize, start_depth=1) for st in states]
+    start = time.time()
+    child_results = [o.choose_action(st, problem, maximize, start_depth=1, max_time=max_time/len(states)) for st in states]
+    end = time.time()
 
     # Only values are needed
     values = [action_value[1] for action_value in child_results]
@@ -92,5 +94,5 @@ def run(states, problem, maximize, max_depth, time, out):
     #print("<PID {}> Aggiungo a {} (stato, valore) {}".format(os.getpid(), out, state_values))
     out += state_values
 
-    print("<PID {}> FINE".format(os.getpid()))
+    print("<PID {}> FINE. Tempo di calcolo {}".format(os.getpid(), round(end - start, 3)))
 

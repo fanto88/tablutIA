@@ -141,6 +141,7 @@ class SearchAgent:
             new_state = self.resulting_state(node.state, action, problem)
             new_node = Node(new_state, node, action, node.path_cost+1)
             child_value = self._minimax(new_node, problem, not maximize, alpha, beta)
+
             if maximize and value < child_value:
                 value = child_value
                 alpha = max(alpha, value)
@@ -152,6 +153,10 @@ class SearchAgent:
                 beta = min(beta, value)
                 if beta <= alpha:
                     break
+
+            # Time control
+            if (time.time() - self.timer) >= self.max_time:
+                break
 
         return value
 
