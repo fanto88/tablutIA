@@ -8,6 +8,17 @@ class TablutState(State):
     def __init__(self, color):
         super().__init__(color)
 
+    def adjacent_throne(self):
+        pos = self.king_position
+        if pos == Position(4, 3) or pos == Position(4, 5) or pos == Position(3, 4) or pos == Position(5, 4):
+            return True
+        return False
+
+    def king_on_throne(self):
+        if self.king_position == Position(4, 4):
+            return True
+        return False
+
     def eat_king(self, action):
         """Check if the king can be eat."""
         obstacle_bitboard = self.black_bitboard | self.king_bitboard | self.throne_bitboard | self.camps_bitboard

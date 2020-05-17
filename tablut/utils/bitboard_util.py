@@ -71,3 +71,37 @@ def eat(bitboard, obstacle_bitboard, position):
                 bitboard = unset(bitboard, position.row, position.column + 1)
                 result = True
     return bitboard, result
+
+
+def is_there_obstacle_in_row(position, obstacle_bitboard):
+    row_index = position.row
+    result = False
+    blocked = 0
+    for row in range(row_index - 1, -1, -1):
+        if get_bit(obstacle_bitboard, row, position.column) == 1:
+            blocked += 1
+            break
+    for row in range(row_index + 1, 9):
+        if get_bit(obstacle_bitboard, row, position.column) == 1:
+            blocked += 1
+            break
+    if blocked == 2:
+        result = True
+    return result, blocked
+
+
+def is_there_obstacle_in_column(position, obstacle_bitboard):
+    column_index = position.column
+    result = False
+    blocked = 0
+    for col in range(column_index - 1, -1, -1):
+        if get_bit(obstacle_bitboard, position.row, col) == 1:
+            blocked += 1
+            break
+    for col in range(column_index + 1, 9):
+        if get_bit(obstacle_bitboard, position.row, col) == 1:
+            blocked += 1
+            break
+    if blocked == 2:
+        result = True
+    return result, blocked

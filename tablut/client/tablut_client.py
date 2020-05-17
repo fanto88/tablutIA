@@ -28,6 +28,7 @@ class Client(ConnectionHandler):
             if self.color == state.turn:  # check if our turn or not
                 action, value = parallel_search2.choose_action(3, state, TablutProblem(), self.timeout - 5, 10, start_as_max)
                 self.send_string(action.to_server_format())  # send the action to the server
+                print("Eseguita azione:", action.to_server_format(), " con valore:", value)
             state = StateFactory().load_state_from_json(self.read_string(), self.color)  # Read the next state
 """        except Exception as e:
            print(e)

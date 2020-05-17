@@ -10,6 +10,7 @@ PIECE_ATE = 2
 WHITE_IN_STRATEGIC_PLACE = 4
 USELESS_BLACK_POSITION = 0.5
 
+
 def white_in_good_position(state):
     value = 0
     if bitboard_util.get_bit(state.white_bitboard, 1, 3):
@@ -31,53 +32,18 @@ def white_in_good_position(state):
     return value
 
 
-def is_there_obstacle_in_row(state, position):
-    row_index = position.row
-    obstacle_bitboard = state.black_bitboard | state.white_bitboard | state.king_bitboard | state.throne_bitboard | state.camps_bitboard
-    result = False
-    blocked = 0
-    for row in range(row_index - 1, -1, -1):
-        if bitboard_util.get_bit(obstacle_bitboard, row, position.column) == 1:
-            blocked += 1
-            break
-    for row in range(row_index + 1, 9):
-        if bitboard_util.get_bit(obstacle_bitboard, row, position.column) == 1:
-            blocked += 1
-            break
-    if blocked == 2:
-        result = True
-    return result, blocked
-
-
-def is_there_obstacle_in_column(state, position):
-    column_index = position.column
-    obstacle_bitboard = state.black_bitboard | state.white_bitboard | state.king_bitboard | state.throne_bitboard | state.camps_bitboard
-    result = False
-    blocked = 0
-    for col in range(column_index - 1, -1, -1):
-        if bitboard_util.get_bit(obstacle_bitboard, position.row, col) == 1:
-            blocked += 1
-            break
-    for col in range(column_index + 1, 9):
-        if bitboard_util.get_bit(obstacle_bitboard, position.row, col) == 1:
-            blocked += 1
-            break
-    if blocked == 2:
-        result = True
-    return result, blocked
-
-
 def king_in_winning_position(state):
     result = 0
     row = state.king_position.row
     column = state.king_position.column
+    obstacle_bitboard = state.black_bitboard | state.white_bitboard | state.king_bitboard | state.throne_bitboard | state.camps_bitboard
     if state.king_position is not None:
         if row == 0 or row == 1 or row == 2 or row == 6 or row == 7 or row == 8:
-            is_blocked, number_escapes_blocked = is_there_obstacle_in_column(state, state.king_position)
+            is_blocked, number_escapes_blocked = bitboard_util.is_there_obstacle_in_column(state.king_position, obstacle_bitboard)
             if not is_blocked:
                 result += KING_IN_WINNING_POSITION * (2 - number_escapes_blocked)
         if column == 0 or column == 1 or column == 2 or column == 6 or column == 7 or column == 8:
-            is_blocked, number_escapes_blocked = is_there_obstacle_in_row(state, state.king_position)
+            is_blocked, number_escapes_blocked = bitboard_util.is_there_obstacle_in_row(state.king_position, obstacle_bitboard)
             if not is_blocked:
                 result += KING_IN_WINNING_POSITION * (2 - number_escapes_blocked)
     return result
@@ -173,13 +139,12 @@ class RandomStrategy(HeuristicStrategy):
             if state.king_position == Position(5, 4):
                 multiplier = BLACK_PIECE_AROUND_KING_IN_THRONE_OR_ADJACENT
 
-
             """                      
             Team imbattuti:
 
-                
-                
-                
+
+
+
             BALANCED PROFILE:
                 Ha vinto contro:
                 Fede -  ./osarracino white
@@ -188,15 +153,15 @@ class RandomStrategy(HeuristicStrategy):
                 Existential_Tablut - ./runmyplayer White 60 'localhost'
                 NorsemanTablut - java -jar Tablut/Executables/TablutAIClient.jar White 60 localhost - Vittoria per Timeout
                 TablutPlayer_Capitano - python3.7 Client.py White 60 'localhost' - Vittoria per Timeout
-                    
+
                 Ha perso contro: 
                 Pelle - java -jar bin/pelle -p w
                 Tablut - java -jar dist/StudentPlayer.jar white
                 Tablut_client - python3 src/client.py White 60 'localhost'
-                
+
                 Ha pareggiato contro:
-                
-                    
+
+
                 PARAMETRI:  
                     BLACK_PIECE_AROUND_KING_IN_THRONE_OR_ADJACENT = 2
                     BLACK_PIECE_AROUND_KING = 4
@@ -205,7 +170,7 @@ class RandomStrategy(HeuristicStrategy):
                     PIECE_ATE = 2
                     WHITE_IN_STRATEGIC_PLACE = 4
                     USELESS_BLACK_POSITION = 0.5
-                
+
                 VALUE FUNCTION:
                     pawns_difference = state.black_count - state.white_count * 2
                     multiplier += 0.4 * pawns_difference
@@ -223,6 +188,7 @@ class RandomStrategy(HeuristicStrategy):
             value += pawns_difference * (PIECE_ATE + 0.3 * pawns_difference)
             value -= king_in_winning_position(state)
             value -= white_in_good_position(state)
+
             return value
         except Exception as e:
             print(e)
