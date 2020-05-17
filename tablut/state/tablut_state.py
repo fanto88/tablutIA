@@ -3,24 +3,32 @@ from tablut.state.state import State
 from tablut.utils import config
 from tablut.utils.action import Action, Position
 
+#TODO: Adjacent_throne fare una bitboard e poi fare l'or tra king_bitboard e bitboard e ritornare il valore,
+# provanddo con time.time() quale delle due versioni è effettivamente più velcoe
+#TODO: Fare la stessa cosa con king_on_throne
+#TODO: eat king togliere tutti gli if fatti così e mettere le funzioni sopra
+#TODO: Come controllare che l'and o l'or fra due bitboard abbia almeno 1 o più di un valore ad 1
+#TODO: Guardare cosa altro si può migliorare
 
 class TablutState(State):
     def __init__(self, color):
         super().__init__(color)
 
     def adjacent_throne(self):
+        """Return True/False if the king is adjacent to the throne."""
         pos = self.king_position
         if pos == Position(4, 3) or pos == Position(4, 5) or pos == Position(3, 4) or pos == Position(5, 4):
             return True
         return False
 
     def king_on_throne(self):
+        """Return True/False if the king is on the throne."""
         if self.king_position == Position(4, 4):
             return True
         return False
 
     def eat_king(self, action):
-        """Check if the king can be eat."""
+        """Check if the king can be eat after with the action."""
         obstacle_bitboard = self.black_bitboard | self.king_bitboard | self.throne_bitboard | self.camps_bitboard
         # Se è sul Trono
         if self.king_position == Position(4, 4):
@@ -45,7 +53,8 @@ class TablutState(State):
                 self.king_position = None
 
     def check_ended(self):
-        """Check if the game is ended."""
+        """Return True/False based on the game ended. In case of True change the parameter winner based on the winner
+        of the game."""
         if self.king_position is None:
             self.winner = config.BLACK
             return True

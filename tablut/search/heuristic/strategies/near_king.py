@@ -8,6 +8,7 @@ class NearKing(HeuristicStrategy):
 
     def eval(self, state, player):
         value = bitboard_util.count_adjacent(state.king_position, state.black_bitboard)
-        if player == config.WHITE:
-            return -value
+        """if player == config.WHITE:
+            return value
+        return -value"""
         return value

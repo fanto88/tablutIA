@@ -77,6 +77,7 @@ class BlackInGoodPosition(HeuristicStrategy):
             value += good_position_value[3]
         if bitboard_util.get_bit(state.black_bitboard, 7, 2):
             value += good_position_value[3]
-        if player == config.WHITE:
-            return -value
+        """if player == config.WHITE:
+            return value
+        return -value"""
         return value
