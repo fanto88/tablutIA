@@ -1,7 +1,8 @@
+from tablut.search.heuristic.strategies.strategy import HeuristicStrategy
 from tablut.utils import bitboard_util, config
 
 
-class NearKing:
+class NearKing(HeuristicStrategy):
     max = 1
     min = -1
 

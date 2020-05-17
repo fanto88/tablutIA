@@ -1,7 +1,8 @@
+from tablut.search.heuristic.strategies.strategy import HeuristicStrategy
 from tablut.utils import bitboard_util, config
 
 
-class BlackInGoodPosition:
+class BlackInGoodPosition(HeuristicStrategy):
     max = 1
     min = -1
 

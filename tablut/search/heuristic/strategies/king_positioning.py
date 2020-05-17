@@ -1,7 +1,8 @@
+from tablut.search.heuristic.strategies.strategy import HeuristicStrategy
 from tablut.utils import config
 
 
-class KingPositioning:
+class KingPositioning(HeuristicStrategy):
     max = 1
     min = -1
 
