@@ -1,4 +1,9 @@
+from tablut.search.heuristic.strategies.black_in_good_position import BlackInGoodPosition
+from tablut.search.heuristic.strategies.king_in_winning_position import KingInWinningPosition
+from tablut.search.heuristic.strategies.near_king import NearKing
+from tablut.search.heuristic.strategies.pawn_difference import PawnDifference
 from tablut.search.heuristic.strategies.strategy import HeuristicStrategy
+from tablut.search.heuristic.strategies.white_good_position import WhiteGoodPosition
 from tablut.utils import bitboard_util
 from tablut.utils.action import Position
 
@@ -181,13 +186,32 @@ class RandomStrategy(HeuristicStrategy):
                     value -= white_in_good_position(state)
             """
 
+            valueFanto = 0
             pawns_difference = state.black_count - state.white_count * 2
             multiplier += 0.4 * pawns_difference
             value += bitboard_util.count_adjacent(state.king_position, state.black_bitboard) * multiplier
+            valueFanto += NearKing().eval(state, player)*multiplier
+            print("Atteso, Effettivo", value, valueFanto)
+
             value += black_in_good_position(state)
+            valueFanto += BlackInGoodPosition().eval(state, player)*BLACK_GOOD_POSITION
+            print("Atteso, Effettivo", value, valueFanto)
+
             value += pawns_difference * (PIECE_ATE + 0.3 * pawns_difference)
+            valueFanto += PawnDifference().eval(state, player)*(PIECE_ATE + 0.3 * pawns_difference)
+            print("Atteso, Effettivo", value, valueFanto)
+
             value -= king_in_winning_position(state)
+            valueFanto += KingInWinningPosition().eval(state, player) * KING_IN_WINNING_POSITION
+            print("Atteso, Effettivo", value, valueFanto)
+
             value -= white_in_good_position(state)
+            valueFanto += WhiteGoodPosition().eval(state, player) * WHITE_IN_STRATEGIC_PLACE
+            print("Atteso, Effettivo", value, valueFanto)
+
+            import functools as ft
+
+
 
             return value
         except Exception as e:

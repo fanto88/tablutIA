@@ -1,5 +1,5 @@
 from multiprocessing import Process, Manager
-from tablut.search.search import SearchAgent, utility
+from tablut.search.search import SearchAgent, utility, Game
 from tablut.state.tablut_state import TablutState
 import operator
 import os
@@ -74,8 +74,8 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth, 
     return best_action, best_value
 
 
-def run(states, problem, maximize, max_depth, max_time, out):
-    o = SearchAgent(max_depth, max_time=max_time)
+def run(states, problem:Game, maximize, max_depth, max_time, out):
+    o = SearchAgent(max_depth, max_time=max_time*0.9)
     print("<PID {}> stati {} tempo per stato {} tempo totale {}".format(os.getpid(), len(states),
                                                                         round(max_time/len(states), 3),
                                                                         round(max_time, 3)))

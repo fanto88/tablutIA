@@ -1,43 +1,9 @@
-from tablut.search.tree import Node
-from multiprocessing import Value
 import time
-import os
-from tablut.search.heuristic.strategies import random
 import operator
-
-
-class SearchMetric:
-
-    def __init__(self):
-        self.node_expandend = 0
-        self.node_skipped = 0
-        self.checked = dict()
-        self.start_time = 0.0
-        self.end_time = 0.0
-
-    def start(self):
-        self.start_time = time.time()
-
-    def stop(self):
-        self.end_time = time.time()
-
-    def results(self):
-        return self.node_expandend, self.node_skipped, self.time_elapsed()
-
-    def time_elapsed(self):
-        return self.end_time - self.start_time
-
-    def __repr__(self):
-        return "<{name}> Nodi espansi:{ne} " \
-               "Nodi saltati:{ns} " \
-               "Tempo:{t}".format(name=self.__class__.__name__,ne=self.node_expandend, ns=self.node_skipped,
-                                  t=self.time_elapsed())
-
-
-class ParallelSearchMetric(SearchMetric):
-    def __init__(self):
-        super(ParallelSearchMetric, self).__init__()
-        self.node_expandend = Value('i', 0)
+from tablut.search.heuristic.strategies import random
+from tablut.search.tree import Node
+from tablut.search.game import Game
+import tablut.search.heuristic as heuristic
 
 
 class SearchAgent:
@@ -45,7 +11,7 @@ class SearchAgent:
     def __init__(self, max_depth, max_time, checked_nodes=None):
         self.max_depth = max_depth
         self.max_time = max_time
-        self.node_expandend = 0
+        self.node_expanded = 0
         self.node_skipped = 0
         self.checked = dict()
         self.timer = 0.0
@@ -70,11 +36,11 @@ class SearchAgent:
 
         return actions_values[0]
 
-    def choose_action(self, state, problem, maximize=True, max_depth=None, max_time=None, start_depth=0):
+    def choose_action(self, state, problem: Game, maximize=True, max_depth=None, max_time=None, start_depth=0):
         self.timer = time.time()
 
         if self.terminal_test(state, problem):
-            return ("None", self.utility(state, problem))
+            return "None", self.utility(state, problem, problem.turn_player(state), start_depth)
 
         self.node_expanded = 0
         self.node_skipped = 0
@@ -90,10 +56,13 @@ class SearchAgent:
         # Child states of the given one
         states = [self.resulting_state(state, action, problem) for action in actions]
 
+        # Turn player
+        player = problem.turn_player(state)
+
         # Utility value, for each state
         first = Node(state)
         first.depth = start_depth
-        eval_scores = [self._minimax(Node(st, first), problem, not maximize, float('-inf'), float('inf')) for st in states]
+        eval_scores = [self._minimax(Node(st, first), problem, not maximize, player, float('-inf'), float('inf')) for st in states]
 
         # Obtaining best action
         bestaction_bestvalue = self._best(list(filter(lambda x: x[1] not in (float('inf'), float('-inf')),
@@ -112,7 +81,8 @@ class SearchAgent:
 
     # TODO: si può provare a ottimizzare l'algoritmo e non restituire per ogni stato (valore, azione) ma solo valore
     # TODO: se fai quanto detto sopra, potresti togliere i nodi
-    def _minimax(self, node, problem, maximize, alpha, beta):
+    # TODO: se trovi mossa vincente, esci subito
+    def _minimax(self, node: Node, problem: Game, maximize, player, alpha, beta):
         # Ricerca termina se:
         #   -E' uno stato terminale
         #   -Il tempo è scaduto
@@ -120,7 +90,7 @@ class SearchAgent:
         if node.depth >= self.max_depth \
                 or self.terminal_test(node.state, problem) \
                 or (time.time() - self.timer) >= self.max_time:
-            values = self.utility(node.state, problem)
+            values = self.utility(node.state, problem, player, node.depth)
 
             self._mark_checked(node.state)
             return values
@@ -137,10 +107,10 @@ class SearchAgent:
         value = float('-inf') if maximize else float('inf')
 
         list_actions = self.possible_actions(node.state, problem)
-        for action in list_actions:  # TODO: vettorizza il codice
+        for action in list_actions:
             new_state = self.resulting_state(node.state, action, problem)
             new_node = Node(new_state, node, action, node.path_cost+1)
-            child_value = self._minimax(new_node, problem, not maximize, alpha, beta)
+            child_value = self._minimax(new_node, problem, not maximize, player, alpha, beta)
 
             if maximize and value < child_value:
                 value = child_value
@@ -168,9 +138,12 @@ class SearchAgent:
         return problem.process_action(state, action)
 
     # TODO: modifica l'euristica che viene utilizzata
-    def utility(self, state, problem):
-        return problem.value(state, state.turn) if problem.goal_test(state) \
-            else self.h.eval(state, problem.turn_player(state))
+    def utility(self, state, problem, player, depth):
+        phase = heuristic.phase.get_phase(depth)
+
+        return problem.value(state, player) if problem.goal_test(state) \
+            else heuristic.eval(state, player, phase)
+            # else self.h.eval(state, player)
 
     def terminal_test(self, state, problem):
         return problem.goal_test(state)
