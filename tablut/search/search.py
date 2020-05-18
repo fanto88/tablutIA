@@ -15,6 +15,7 @@ class SearchAgent:
         self.node_skipped = 0
         self.checked = dict()
         self.timer = 0.0
+        self.phase = heuristic.phase.START
 
         if checked_nodes:
             self.checked = checked_nodes
@@ -25,7 +26,6 @@ class SearchAgent:
     def _best(self, actions_values, maximize):
         """Returns the first "action" in the given list,
         ordered by "values" Ascendant or Descendant, depending on "maximize" var."""
-
         if not actions_values:
             return (None, float('inf')) if maximize else (None, float('-inf'))
 
@@ -36,11 +36,9 @@ class SearchAgent:
 
         return actions_values[0]
 
-    def choose_action(self, state, problem: Game, maximize=True, max_depth=None, max_time=None, start_depth=0):
+    def choose_action(self, state, problem: Game, maximize=True, max_depth=None, max_time=None,
+                      start_depth=0, given_player=None, given_phase=None):
         self.timer = time.time()
-
-        if self.terminal_test(state, problem):
-            return "None", self.utility(state, problem, problem.turn_player(state), start_depth)
 
         self.node_expanded = 0
         self.node_skipped = 0
@@ -50,6 +48,12 @@ class SearchAgent:
         if max_time:
             self.max_time = max_time
 
+        if given_phase:
+            self.phase = given_phase
+
+        if self.terminal_test(state, problem) or start_depth >= self.max_depth:
+            return "None", self.utility(state, problem, problem.turn_player(state), start_depth)
+
         # All possible actions applicable in the given state
         actions = self.possible_actions(state, problem)
 
@@ -58,6 +62,8 @@ class SearchAgent:
 
         # Turn player
         player = problem.turn_player(state)
+        if given_player:
+            player = given_player
 
         # Utility value, for each state
         first = Node(state)
@@ -138,8 +144,9 @@ class SearchAgent:
         return problem.process_action(state, action)
 
     # TODO: modifica l'euristica che viene utilizzata
+    # TODO: elimina par. depth
     def utility(self, state, problem, player, depth):
-        phase = heuristic.phase.get_phase(depth)
+        phase = self.phase
 
         return problem.value(state, player) if problem.goal_test(state) \
             else heuristic.eval(state, player, phase)

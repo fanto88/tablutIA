@@ -11,4 +11,5 @@ class PawnDifference(HeuristicStrategy):
         """if player == config.WHITE:
             return value
         return -value"""
+        print("H:", state,player,value)
         return value

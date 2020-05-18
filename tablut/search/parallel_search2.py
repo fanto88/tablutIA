@@ -4,9 +4,11 @@ from tablut.state.tablut_state import TablutState
 import operator
 import os
 import time
+import tablut.search.heuristic as heuristic
 
 
-def choose_action(process_no, state: TablutState, problem, max_time, max_depth, maximize=True, start_depth=0):
+def choose_action(process_no, state: TablutState, problem, max_time, max_depth,
+                  maximize=True, start_depth=0, given_phase=None, given_player=None):
 
     def terminal_test(state):
         return start_depth >= max_depth or problem.goal_test(state)
@@ -20,9 +22,20 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth, 
 
 
     # Body
+
+    # Phase
+    phase = heuristic.phase.START
+    if given_phase:
+        phase = given_phase
+
+    # Player
+    player = problem.turn_player(state)
+    if given_player:
+        player = given_player
+
     if process_no == 1:
         o = SearchAgent(max_depth, max_time)
-        return o.choose_action(state, problem, maximize)
+        return o.choose_action(state, problem, maximize, given_phase=phase)
 
     # Check if terminal
     if terminal_test(state):
@@ -44,7 +57,7 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth, 
     # Workers
     results = Manager().list()
     jobs = [Process(target=run,
-                    args=(states, problem, not maximize, max_depth, max_time, results))
+                    args=(states, problem, not maximize, max_depth, max_time, phase, player, results))
             for states in cut_first_level_states]
 
     # Start workers
@@ -57,7 +70,6 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth, 
 
     state_actions = list(zip(first_level_states, list_actions))
     results.sort(key=operator.itemgetter(1), reverse=maximize)
-
     best_state = results[0][0]
     best_value = results[0][1]
 
@@ -74,14 +86,15 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth, 
     return best_action, best_value
 
 
-def run(states, problem:Game, maximize, max_depth, max_time, out):
+def run(states, problem:Game, maximize, max_depth, max_time, phase, player, out):
     o = SearchAgent(max_depth, max_time=max_time*0.9)
     print("<PID {}> stati {} tempo per stato {} tempo totale {}".format(os.getpid(), len(states),
                                                                         round(max_time/len(states), 3),
                                                                         round(max_time, 3)))
 
     start = time.time()
-    child_results = [o.choose_action(st, problem, maximize, start_depth=1, max_time=max_time/len(states)) for st in states]
+    child_results = [o.choose_action(st, problem, maximize, given_phase=phase, given_player=player,
+                                     start_depth=1, max_time=max_time/len(states)) for st in states]
     end = time.time()
 
     # Only values are needed
