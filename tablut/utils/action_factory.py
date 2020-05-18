@@ -4,6 +4,7 @@ from tablut.utils.action import Position, Action
 
 class ActionFactory:
 
+    #TODO: Togliere dei for mettendo una condizione all'interno del for stesso per saltare il proprio valore
     @staticmethod
     def get_available_actions_for_pawn(position, obstacle_bitboard, color):
         """Get all the valid moves for a pawn."""

@@ -7,9 +7,4 @@ class PawnDifference(HeuristicStrategy):
     min = -1
 
     def eval(self, state, player):
-        value = state.black_count - state.white_count * 2
-        """if player == config.WHITE:
-            return value
-        return -value"""
-        print("H:", state,player,value)
-        return value
+        return state.black_count - state.white_count * 2

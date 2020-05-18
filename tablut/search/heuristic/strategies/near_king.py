@@ -1,5 +1,5 @@
 from tablut.search.heuristic.strategies.strategy import HeuristicStrategy
-from tablut.utils import bitboard_util, config
+from tablut.utils import bitboard_util
 
 
 class NearKing(HeuristicStrategy):
@@ -7,8 +7,4 @@ class NearKing(HeuristicStrategy):
     min = -1
 
     def eval(self, state, player):
-        value = bitboard_util.count_adjacent(state.king_position, state.black_bitboard)
-        """if player == config.WHITE:
-            return value
-        return -value"""
-        return value
+        return bitboard_util.count_adjacent(state.king_position, state.black_bitboard)

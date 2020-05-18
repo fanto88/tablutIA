@@ -47,8 +47,8 @@ class TablutState(State):
 
         # Se è lontano dal trono
         else:
-            obstacle_bitboard = self.king_bitboard | self.black_bitboard | self.throne_bitboard | self.camps_bitboard
-            self.king_bitboard, result = bitboard_util.eat(self.king_bitboard, obstacle_bitboard, action.end)
+            obstacle_bitboard = self.king_bitboard | self.black_bitboard | self.throne_bitboard
+            self.king_bitboard, result = bitboard_util.eat_black(self.king_bitboard, obstacle_bitboard, self.camps_bitboard, action.end)
             if result:
                 self.king_position = None
 
@@ -82,8 +82,8 @@ class TablutState(State):
                 self.king_bitboard = bitboard_util.unset(self.king_bitboard, action.start.row,
                                                          action.start.column)
                 self.king_position = Position(action.end.row, action.end.column)
-            obstacle_bitboard = self.king_bitboard | self.white_bitboard | self.throne_bitboard | self.camps_bitboard
-            self.black_bitboard, result = bitboard_util.eat(self.black_bitboard, obstacle_bitboard, action.end)
+            obstacle_bitboard = self.king_bitboard | self.white_bitboard | self.throne_bitboard
+            self.black_bitboard, result = bitboard_util.eat_black(self.black_bitboard, obstacle_bitboard, self.camps_bitboard, action.end)
             if result:
                 self.black_count -= 1
         else:
@@ -92,7 +92,7 @@ class TablutState(State):
                                                       action.start.column)
             obstacle_bitboard = self.king_bitboard | self.black_bitboard | self.throne_bitboard | self.camps_bitboard
             self.eat_king(action)
-            self.white_bitboard, result = bitboard_util.eat(self.white_bitboard, obstacle_bitboard, action.end)
+            self.white_bitboard, result = bitboard_util.eat_white(self.white_bitboard, obstacle_bitboard, action.end)
             if result:
                 self.white_count -= 1
         return self

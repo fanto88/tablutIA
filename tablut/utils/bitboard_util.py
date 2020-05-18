@@ -47,9 +47,105 @@ def count_adjacent(position, obstacle_bitboard):
     return count
 
 
-def eat(bitboard, obstacle_bitboard, position):
-    """Check if you can eat a normal Pawn and return the bitboard without the pawn ate."""
+def eat_white(bitboard, obstacle_bitboard, position):
+    """Check if you can eat a white Pawn and return the bitboard without the pawn ate."""
     result = False
+    if position.row - 2 >= 0:
+        if get_bit(obstacle_bitboard, position.row - 2, position.column) == 1:
+            if get_bit(bitboard, position.row - 1, position.column) == 1:
+                bitboard = unset(bitboard, position.row - 1, position.column)
+                result = True
+    if position.column - 2 >= 0:
+        if get_bit(obstacle_bitboard, position.row, position.column - 2) == 1:
+            if get_bit(bitboard, position.row, position.column - 1) == 1:
+                bitboard = unset(bitboard, position.row, position.column - 1)
+                result = True
+    if position.row + 2 <= 8:
+        if get_bit(obstacle_bitboard, position.row + 2, position.column) == 1:
+            if get_bit(bitboard, position.row + 1, position.column) == 1:
+                bitboard = unset(bitboard, position.row + 1, position.column)
+                result = True
+    if position.column + 2 <= 8:
+        if get_bit(obstacle_bitboard, position.row, position.column + 2) == 1:
+            if get_bit(bitboard, position.row, position.column + 1) == 1:
+                bitboard = unset(bitboard, position.row, position.column + 1)
+                result = True
+    return bitboard, result
+
+
+def eat_black(bitboard, obstacle_bitboard, camps_bitboard, position):
+    """Check if you can eat a black Pawn and return the bitboard without the pawn ate."""
+    result = False
+    if position.row == 0 and position.column + 1 == 2:
+        obstacle_bitboard |= camps_bitboard
+    if position.row == 0 and position.column - 1 == 6:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row == 1 and position.column + 1 == 3:
+        obstacle_bitboard |= camps_bitboard
+    if position.row == 1 and position.column - 1 == 5:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row == 3 and position.column + 1 == 7:
+        obstacle_bitboard |= camps_bitboard
+    if position.row == 3 and position.column - 1 == 1:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row == 4 and position.column + 1 == 6:
+        obstacle_bitboard |= camps_bitboard
+    if position.row == 4 and position.column - 1 == 2:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row == 5 and position.column + 1 == 7:
+        obstacle_bitboard |= camps_bitboard
+    if position.row == 5 and position.column - 1 == 1:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row == 7 and position.column + 1 == 3:
+        obstacle_bitboard |= camps_bitboard
+    if position.row == 7 and position.column - 1 == 5:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row == 8 and position.column + 1 == 2:
+        obstacle_bitboard |= camps_bitboard
+    if position.row == 8 and position.column - 1 == 6:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row + 1 == 2 and position.column == 0:
+        obstacle_bitboard |= camps_bitboard
+    if position.row - 1 == 6 and position.column == 0:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row + 1 == 3 and position.column == 1:
+        obstacle_bitboard |= camps_bitboard
+    if position.row - 1 == 5 and position.column == 1:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row + 1 == 7 and position.column == 3:
+        obstacle_bitboard |= camps_bitboard
+    if position.row - 1 == 1 and position.column == 3:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row + 1 == 6 and position.column == 4:
+        obstacle_bitboard |= camps_bitboard
+    if position.row - 1 == 2 and position.column == 4:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row + 1 == 7 and position.column == 5:
+        obstacle_bitboard |= camps_bitboard
+    if position.row - 1 == 1 and position.column == 5:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row + 1 == 3 and position.column == 7:
+        obstacle_bitboard |= camps_bitboard
+    if position.row - 1 == 5 and position.column == 7:
+        obstacle_bitboard |= camps_bitboard
+
+    if position.row + 1 == 2 and position.column == 8:
+        obstacle_bitboard |= camps_bitboard
+    if position.row - 1 == 6 and position.column == 8:
+        obstacle_bitboard |= camps_bitboard
+
     if position.row - 2 >= 0:
         if get_bit(obstacle_bitboard, position.row - 2, position.column) == 1:
             if get_bit(bitboard, position.row - 1, position.column) == 1:

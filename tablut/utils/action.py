@@ -11,11 +11,11 @@ class Position:
         return False
 
     def __repr__(self):
-        return "RIGA: {:d} COLONNA:{:d}".format(self.row, self.column)
+        return "RIGA:{:d} COLONNA:{:d}".format(self.row, self.column)
 
 
 class Action:
-    """Class that rappresent an Action on the board."""
+    """Class that represent an Action on the board."""
 
     def __init__(self, start: Position, end: Position, role):
         self.start = start

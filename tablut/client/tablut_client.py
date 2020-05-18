@@ -16,19 +16,21 @@ class Client(ConnectionHandler):
         self.color = color
         self.timeout = timeout
 
+    #TODO: In caso di errore eseguire una mossa random dalla lista di mosse possibili
+    #TODO: Controllare il bug con profondità 1, ritorna il giocatore opposto
     def run(self):
         """Implements the logic of the client."""
         #try:
         self.connect()  # Connecting to the server
         self.send_string(self.player_name)  # Sending the name
         state = StateFactory().load_state_from_json(self.read_string(), self.color)  # Read the initial state
-        start_as_max = True
         turn = 1 if self.color.lower() == config.WHITE.lower() else 2
         while True:  # Game loop
-            print(turn)
+            from tablut.search.heuristic.strategies.king_in_winning_position import KingInWinningPosition
+            print(KingInWinningPosition().eval(state, self.color) * -5000)
             if self.color == state.turn:  # check if our turn or not
                 phase = ph.get_phase(turn)
-                action, value = parallel_search2.choose_action(3, state, TablutProblem(), self.timeout - 5, 2, True, given_phase=phase)
+                action, value = parallel_search2.choose_action(3, state, TablutProblem(), self.timeout - 5, 10, True, given_phase=phase)
                 self.send_string(action.to_server_format())  # send the action to the server
                 print("Eseguita azione:", action.to_server_format(), " con valore:", value)
             turn += 1

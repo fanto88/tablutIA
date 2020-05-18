@@ -7,7 +7,7 @@ class BlackInGoodPosition(HeuristicStrategy):
     min = -1
 
     def eval(self, state, player):
-        value = 0
+        count_pawns = 0
         # BLACK_GOOD_POSITION = [X, X, X, X]  # Top left, Top right, Bottom Left, Bottom Right
         very_good = 1
         good = 1 / 2
@@ -62,22 +62,19 @@ class BlackInGoodPosition(HeuristicStrategy):
 
         # BLACK_GOOD_POSITION = [X, X, X, X]  # Top left, Top right, Bottom Left, Bottom Right
         if bitboard_util.get_bit(state.black_bitboard, 1, 6):
-            value += good_position_value[0]
+            count_pawns += good_position_value[0]
         if bitboard_util.get_bit(state.black_bitboard, 2, 7):
-            value += good_position_value[0]
+            count_pawns += good_position_value[0]
         if bitboard_util.get_bit(state.black_bitboard, 1, 2):
-            value += good_position_value[1]
+            count_pawns += good_position_value[1]
         if bitboard_util.get_bit(state.black_bitboard, 2, 1):
-            value += good_position_value[1]
+            count_pawns += good_position_value[1]
         if bitboard_util.get_bit(state.black_bitboard, 6, 7):
-            value += good_position_value[2]
+            count_pawns += good_position_value[2]
         if bitboard_util.get_bit(state.black_bitboard, 7, 6):
-            value += good_position_value[2]
+            count_pawns += good_position_value[2]
         if bitboard_util.get_bit(state.black_bitboard, 6, 1):
-            value += good_position_value[3]
+            count_pawns += good_position_value[3]
         if bitboard_util.get_bit(state.black_bitboard, 7, 2):
-            value += good_position_value[3]
-        """if player == config.WHITE:
-            return value
-        return -value"""
-        return value
+            count_pawns += good_position_value[3]
+        return count_pawns
