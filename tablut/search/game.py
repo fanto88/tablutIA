@@ -74,6 +74,7 @@ class TablutProblem(Game):
         if not winner:
             return 0
         elif winner == player:
+            #print(winner, "|", player)
             return -1000000
         else:
             return 1000000

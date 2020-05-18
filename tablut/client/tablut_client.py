@@ -26,11 +26,25 @@ class Client(ConnectionHandler):
         state = StateFactory().load_state_from_json(self.read_string(), self.color)  # Read the initial state
         turn = 1 if self.color.lower() == config.WHITE.lower() else 2
         while True:  # Game loop
+            from tablut.search.heuristic.strategies.free_winning_points import FreeWinningPoints
+            from tablut.search.heuristic.strategies.white_count import WhiteCount
+            from tablut.search.heuristic.strategies.black_count import BlackCount
+            from tablut.search.heuristic.strategies.white_winning_points import WhiteWinningPoints
+            from tablut.search.heuristic.strategies.black_winning_points import BlackWinningPoints
+            from tablut.search.heuristic.strategies.near_king import NearKing
+            from tablut.search.heuristic.strategies.king_positioning import KingPositioning
             from tablut.search.heuristic.strategies.king_in_winning_position import KingInWinningPosition
-            print(KingInWinningPosition().eval(state, self.color) * -5000)
+            from tablut.search.heuristic.strategies.white_good_position import WhiteGoodPosition
+            print()
+            print("WhiteCount:", (WhiteCount().eval(state, self.color) * 2))
+            print("BlackCount:", (BlackCount().eval(state, self.color) * -2))
+            print("NearKing:", (NearKing().eval(state, self.color) * -10))
+            print("KingPositioning:", (KingPositioning().eval(state, self.color) * 1))
+            print("KingInWinningPosition:", (KingInWinningPosition().eval(state, self.color) * 5000))
+            print("WhiteGoodPosition:", (WhiteGoodPosition().eval(state, self.color) * 2))
             if self.color == state.turn:  # check if our turn or not
                 phase = ph.get_phase(turn)
-                action, value = parallel_search2.choose_action(3, state, TablutProblem(), self.timeout - 5, 10, True, given_phase=phase)
+                action, value = parallel_search2.choose_action(3, state, TablutProblem(), self.timeout - 5, 3, True, given_phase=phase)
                 self.send_string(action.to_server_format())  # send the action to the server
                 print("Eseguita azione:", action.to_server_format(), " con valore:", value)
             turn += 1
