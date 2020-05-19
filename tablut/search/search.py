@@ -51,9 +51,6 @@ class SearchAgent:
         if given_phase:
             self.phase = given_phase
 
-        if self.terminal_test(state, problem) or start_depth >= self.max_depth:
-            return "None", self.utility(state, problem, problem.turn_player(state), start_depth)
-
         # All possible actions applicable in the given state
         actions = self.possible_actions(state, problem)
 
@@ -64,6 +61,9 @@ class SearchAgent:
         player = problem.turn_player(state)
         if given_player:
             player = given_player
+
+        if self.terminal_test(state, problem) or start_depth >= self.max_depth:
+            return "None", self.utility(state, problem, player, start_depth)
 
         # Utility value, for each state
         first = Node(state)
@@ -93,6 +93,7 @@ class SearchAgent:
         #   -E' uno stato terminale
         #   -Il tempo è scaduto
         #   -Non voglio più espandere l'albero
+
         if node.depth >= self.max_depth \
                 or self.terminal_test(node.state, problem) \
                 or (time.time() - self.timer) >= self.max_time:

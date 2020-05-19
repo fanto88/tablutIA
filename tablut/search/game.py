@@ -47,7 +47,6 @@ class TablutProblem(Game):
     """
     Class that implements rules of classic tablut (9x9 chessboard)
     """
-
     def actions(self, state):   # TODO: implement
         return ActionFactory.all_available_actions(state)
 
@@ -78,8 +77,7 @@ class TablutProblem(Game):
             value = 1000000
         else:
             value = -1000000
-        print()
-        print(winner, "|", player, "|", value)
+
         return value
 
     def process_action(self, state, action):

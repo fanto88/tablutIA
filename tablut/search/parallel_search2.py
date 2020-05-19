@@ -53,7 +53,6 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth,
 
     # State assigned to each process
     cut_first_level_states = list(chunks(first_level_states, cut))
-
     # Workers
     results = Manager().list()
     jobs = [Process(target=run,
@@ -83,18 +82,19 @@ def choose_action(process_no, state: TablutState, problem, max_time, max_depth,
     if not best_action:
         print("Best S, Best A", best_state, best_action)
         print("States:", first_level_states)
+
     return best_action, best_value
 
 
 def run(states, problem:Game, maximize, max_depth, max_time, phase, player, out):
-    o = SearchAgent(max_depth, max_time=max_time*0.9)
+    o = SearchAgent(max_depth, max_time=max_time)
     print("<PID {}> stati {} tempo per stato {} tempo totale {}".format(os.getpid(), len(states),
                                                                         round(max_time/len(states), 3),
                                                                         round(max_time, 3)))
 
     start = time.time()
     child_results = [o.choose_action(st, problem, maximize, given_phase=phase, given_player=player,
-                                     start_depth=1, max_time=max_time/len(states)) for st in states]
+                                     start_depth=1, max_time=0.95*max_time/len(states)) for st in states]
     end = time.time()
 
     # Only values are needed
