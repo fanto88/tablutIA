@@ -19,38 +19,8 @@ from tablut.utils.action import Position
 def get_function(state, player, phase) -> hf.HeuristicFunction:
 
     def white_strategies(phase):
-        """
-
-
-
-        """
         if phase == ph.START:
-            """
-            return [
-                    (KingPositioning(), 100),
-                    (KingInWinningPosition(), 5000),
-                    (WhiteGoodPosition(), 3),
-                    (PawnDifference(), -5),
-                    (NearKing(), -2)
-                ]
-          return [
-                (WhiteCount(), 2),
-                (BlackCount(), -2),
-                (NearKing(), -10),
-                (KingPositioning(), 100),
-                (KingInWinningPosition(), 5000),
-                (WhiteGoodPosition(), 2)
-            ]
             return[
-                (FreeWinningPoints(), 300),
-                (WhiteCount(), 30),
-                (BlackCount(), -20),
-                (NearKing(), -1000),
-                (KingInWinningPosition(), 2000),
-                (KingPositioning(), 100)
-            ]
-
-            return [
                 (FreeWinningPoints(), 100),
                 (WhiteWinningPoints(), 200),
                 (BlackWinningPoints(), -300),
@@ -60,34 +30,10 @@ def get_function(state, player, phase) -> hf.HeuristicFunction:
                 (KingInWinningPosition(), 10000),
                 (KingPositioning(), 100),
                 (BlackInGoodPosition(), -300)
-            ]"""
+            ]
 
         elif phase == ph.MIDDLE:
-            """return [
-                (KingPositioning(), 100),
-                (KingInWinningPosition(), 5000),
-                (WhiteGoodPosition(), 3),
-                (PawnDifference(), -5),
-                (NearKing(), -2)
-            ]
-          return [
-                (WhiteCount(), 2),
-                (BlackCount(), -2),
-                (NearKing(), -10),
-                (KingPositioning(), 100),
-                (KingInWinningPosition(), 5000),
-                (WhiteGoodPosition(), 2)
-            ]
             return[
-                (FreeWinningPoints(), 300),
-                (WhiteCount(), 30),
-                (BlackCount(), -20),
-                (NearKing(), -1000),
-                (KingInWinningPosition(), 2000),
-                (KingPositioning(), 100)
-            ]
-
-            return [
                 (FreeWinningPoints(), 100),
                 (WhiteWinningPoints(), 200),
                 (BlackWinningPoints(), -300),
@@ -97,34 +43,10 @@ def get_function(state, player, phase) -> hf.HeuristicFunction:
                 (KingInWinningPosition(), 10000),
                 (KingPositioning(), 100),
                 (BlackInGoodPosition(), -300)
-            ]"""
+            ]
 
         elif phase == ph.LATE:
-            """return [
-                (KingPositioning(), 100),
-                (KingInWinningPosition(), 5000),
-                (WhiteGoodPosition(), 3),
-                (PawnDifference(), -5),
-                (NearKing(), -2)
-            ]
-          return [
-                (WhiteCount(), 2),
-                (BlackCount(), -2),
-                (NearKing(), -10),
-                (KingPositioning(), 100),
-                (KingInWinningPosition(), 5000),
-                (WhiteGoodPosition(), 2)
-            ]
             return[
-                (FreeWinningPoints(), 300),
-                (WhiteCount(), 30),
-                (BlackCount(), -20),
-                (NearKing(), -1000),
-                (KingInWinningPosition(), 2000),
-                (KingPositioning(), 100)
-            ]
-
-            return [
                 (FreeWinningPoints(), 100),
                 (WhiteWinningPoints(), 200),
                 (BlackWinningPoints(), -300),
@@ -134,7 +56,7 @@ def get_function(state, player, phase) -> hf.HeuristicFunction:
                 (KingInWinningPosition(), 10000),
                 (KingPositioning(), 100),
                 (BlackInGoodPosition(), -300)
-            ]"""
+            ]
         else:
             print("Fase non riconosciuta")
 
