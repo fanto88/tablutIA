@@ -3,6 +3,7 @@ from tablut.utils import bitboard_util, config
 
 
 class WhiteGoodPosition(HeuristicStrategy):
+    """Return how many white pawns are on a good position."""
     max = 1
     min = -1
 

@@ -3,12 +3,6 @@ from tablut.state.state import State
 from tablut.utils import config
 from tablut.utils.action import Action, Position
 
-#TODO: Adjacent_throne fare una bitboard e poi fare l'or tra king_bitboard e bitboard e ritornare il valore,
-# provanddo con time.time() quale delle due versioni è effettivamente più velcoe
-#TODO: Fare la stessa cosa con king_on_throne
-#TODO: eat king togliere tutti gli if fatti così e mettere le funzioni sopra
-#TODO: Come controllare che l'and o l'or fra due bitboard abbia almeno 1 o più di un valore ad 1
-#TODO: Guardare cosa altro si può migliorare
 
 class TablutState(State):
     def __init__(self, color):
@@ -48,7 +42,8 @@ class TablutState(State):
         # Se è lontano dal trono
         else:
             obstacle_bitboard = self.king_bitboard | self.black_bitboard | self.throne_bitboard
-            self.king_bitboard, result = bitboard_util.eat_black(self.king_bitboard, obstacle_bitboard, self.camps_bitboard, action.end)
+            self.king_bitboard, result = bitboard_util.eat_black(self.king_bitboard, obstacle_bitboard,
+                                                                 self.camps_bitboard, action.end)
             if result:
                 self.king_position = None
 
@@ -83,7 +78,8 @@ class TablutState(State):
                                                          action.start.column)
                 self.king_position = Position(action.end.row, action.end.column)
             obstacle_bitboard = self.king_bitboard | self.white_bitboard | self.throne_bitboard
-            self.black_bitboard, result = bitboard_util.eat_black(self.black_bitboard, obstacle_bitboard, self.camps_bitboard, action.end)
+            self.black_bitboard, result = bitboard_util.eat_black(self.black_bitboard, obstacle_bitboard,
+                                                                  self.camps_bitboard, action.end)
             if result:
                 self.black_count -= 1
         else:

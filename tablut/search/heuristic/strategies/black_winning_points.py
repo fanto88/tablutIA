@@ -3,6 +3,8 @@ from tablut.utils import bitboard_util, config
 
 
 class BlackWinningPoints(HeuristicStrategy):
+    """Count how many black pawns are on escape points."""
+
     max = 1
     min = -1
 

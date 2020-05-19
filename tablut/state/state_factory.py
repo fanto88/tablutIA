@@ -8,9 +8,12 @@ from tablut.utils.action import Position
 class StateFactory:
     """Class that has the objective of creating new States."""
 
+    def __init__(self):
+        pass
+
     @staticmethod
     def load_state_from_json(json_string, color):
-        """Create a new State based on a json_string that rappresent the state of the game."""
+        """Create a new State based on a json_string that represent the state of the game."""
         state = TablutState(color)
         row_index = 0
         state.turn = json_string["turn"]

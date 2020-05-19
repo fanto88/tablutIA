@@ -3,6 +3,8 @@ from tablut.utils import bitboard_util, config
 
 
 class FreeWinningPoints(HeuristicStrategy):
+    """Count how many free escape points are on the board."""
+
     max = 1
     min = -1
 

@@ -3,6 +3,8 @@ from tablut.utils import bitboard_util, config
 
 
 class BlackInGoodPosition(HeuristicStrategy):
+    """Count how many black pawns are in a good position and give them a weight based on the King location."""
+
     max = 1
     min = -1
 
@@ -13,6 +15,7 @@ class BlackInGoodPosition(HeuristicStrategy):
         good = 1 / 2
         not_bad = 1 / 4
         good_position_value = [good, good, good, good]
+
         # Il re è sotto al trono a destra
         if state.king_position.row > 4:
             if state.king_position.column < 4:

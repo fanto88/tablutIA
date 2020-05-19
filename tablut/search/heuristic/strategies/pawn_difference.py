@@ -3,6 +3,8 @@ from tablut.utils import config
 
 
 class PawnDifference(HeuristicStrategy):
+    """Return the difference between black and white pawns."""
+
     max = 1
     min = -1
 

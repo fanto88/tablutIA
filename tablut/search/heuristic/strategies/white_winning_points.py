@@ -3,6 +3,7 @@ from tablut.utils import bitboard_util, config
 
 
 class WhiteWinningPoints(HeuristicStrategy):
+    """Return the number of white pawns on escape points."""
     max = 1
     min = -1
 

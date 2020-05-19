@@ -3,6 +3,8 @@ from tablut.utils import config
 
 
 class KingPositioning(HeuristicStrategy):
+    """Give a value to the King position."""
+
     max = 1
     min = -1
 
