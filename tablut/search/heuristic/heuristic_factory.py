@@ -48,7 +48,7 @@ def get_function(state, player, phase) -> hf.HeuristicFunction:
                 (NearKing(), -1000),
                 (KingInWinningPosition(), 2000),
                 (KingPositioning(), 100)
-            ]"""
+            ]
 
             return [
                 (FreeWinningPoints(), 100),
@@ -60,7 +60,7 @@ def get_function(state, player, phase) -> hf.HeuristicFunction:
                 (KingInWinningPosition(), 10000),
                 (KingPositioning(), 100),
                 (BlackInGoodPosition(), -300)
-            ]
+            ]"""
 
         elif phase == ph.MIDDLE:
             """return [
@@ -85,7 +85,7 @@ def get_function(state, player, phase) -> hf.HeuristicFunction:
                 (NearKing(), -1000),
                 (KingInWinningPosition(), 2000),
                 (KingPositioning(), 100)
-            ]"""
+            ]
 
             return [
                 (FreeWinningPoints(), 100),
@@ -97,7 +97,7 @@ def get_function(state, player, phase) -> hf.HeuristicFunction:
                 (KingInWinningPosition(), 10000),
                 (KingPositioning(), 100),
                 (BlackInGoodPosition(), -300)
-            ]
+            ]"""
 
         elif phase == ph.LATE:
             """return [
@@ -122,7 +122,7 @@ def get_function(state, player, phase) -> hf.HeuristicFunction:
                 (NearKing(), -1000),
                 (KingInWinningPosition(), 2000),
                 (KingPositioning(), 100)
-            ]"""
+            ]
 
             return [
                 (FreeWinningPoints(), 100),
@@ -134,7 +134,7 @@ def get_function(state, player, phase) -> hf.HeuristicFunction:
                 (KingInWinningPosition(), 10000),
                 (KingPositioning(), 100),
                 (BlackInGoodPosition(), -300)
-            ]
+            ]"""
         else:
             print("Fase non riconosciuta")
 
@@ -151,11 +151,9 @@ def get_function(state, player, phase) -> hf.HeuristicFunction:
                 multiplier = 2
             if state.king_position == Position(5, 4):
                 multiplier = 2
-            pawns_difference = state.black_count - state.white_count * 2
-            multiplier += 0.4 * pawns_difference
             return [
-                (BlackInGoodPosition(), 6), (KingInWinningPosition(), -5000), (WhiteGoodPosition(), -4),
-                (NearKing(), multiplier), (PawnDifference(), pawns_difference * (2 + 0.3 * pawns_difference))
+                (BlackInGoodPosition(), 12), (KingInWinningPosition(), -5000), (WhiteGoodPosition(), -4),
+                (NearKing(), multiplier), (PawnDifference(), 4)
             ]
 
         elif phase == ph.MIDDLE:
@@ -170,11 +168,9 @@ def get_function(state, player, phase) -> hf.HeuristicFunction:
                 multiplier = 2
             if state.king_position == Position(5, 4):
                 multiplier = 2
-            pawns_difference = state.black_count - state.white_count * 2
-            multiplier += 0.4 * pawns_difference
             return [
-                (BlackInGoodPosition(), 6), (KingInWinningPosition(), -5000), (WhiteGoodPosition(), -4),
-                (NearKing(), multiplier), (PawnDifference(), pawns_difference * (2 + 0.3 * pawns_difference))
+                (BlackInGoodPosition(), 12), (KingInWinningPosition(), -5000), (WhiteGoodPosition(), -4),
+                (NearKing(), multiplier), (PawnDifference(), 4)
             ]
 
         elif phase == ph.LATE:
@@ -189,11 +185,9 @@ def get_function(state, player, phase) -> hf.HeuristicFunction:
                 multiplier = 2
             if state.king_position == Position(5, 4):
                 multiplier = 2
-            pawns_difference = state.black_count - state.white_count * 2
-            multiplier += 0.4 * pawns_difference
             return [
-                (BlackInGoodPosition(), 6), (KingInWinningPosition(), -5000), (WhiteGoodPosition(), -4),
-                (NearKing(), multiplier), (PawnDifference(), pawns_difference * (2 + 0.3 * pawns_difference))
+                (BlackInGoodPosition(), 12), (KingInWinningPosition(), -5000), (WhiteGoodPosition(), -4),
+                (NearKing(), multiplier), (PawnDifference(), 4)
             ]
         else:
             print("Fase non riconosciuta")
