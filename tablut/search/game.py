@@ -72,12 +72,15 @@ class TablutProblem(Game):
                 return -1000000"""
 
         if not winner:
-            return 0
+            value = 0
         elif winner == player:
-            #print(winner, "|", player)
-            return -1000000
+
+            value = 1000000
         else:
-            return 1000000
+            value = -1000000
+        print()
+        print(winner, "|", player, "|", value)
+        return value
 
     def process_action(self, state, action):
         return StateFactory.load_state_from_action(state, action)

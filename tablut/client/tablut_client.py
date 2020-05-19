@@ -35,16 +35,30 @@ class Client(ConnectionHandler):
             from tablut.search.heuristic.strategies.king_positioning import KingPositioning
             from tablut.search.heuristic.strategies.king_in_winning_position import KingInWinningPosition
             from tablut.search.heuristic.strategies.white_good_position import WhiteGoodPosition
+
+            from tablut.search.heuristic.strategies.black_in_good_position import BlackInGoodPosition
             print()
-            print("WhiteCount:", (WhiteCount().eval(state, self.color) * 2))
-            print("BlackCount:", (BlackCount().eval(state, self.color) * -2))
-            print("NearKing:", (NearKing().eval(state, self.color) * -10))
-            print("KingPositioning:", (KingPositioning().eval(state, self.color) * 1))
-            print("KingInWinningPosition:", (KingInWinningPosition().eval(state, self.color) * 5000))
-            print("WhiteGoodPosition:", (WhiteGoodPosition().eval(state, self.color) * 2))
+            (FreeWinningPoints(), 100),
+            (WhiteWinningPoints(), 200),
+            (BlackWinningPoints(), -300),
+            (WhiteCount(), 200),
+            (BlackCount(), -500),
+            (NearKing(), -1000),
+            (KingInWinningPosition(), 10000),
+            (KingPositioning(), 100),
+            (BlackInGoodPosition(), -300)
+            print("FreeWinningPoints:", (FreeWinningPoints().eval(state, self.color) * 100))
+            print("WhiteWinningPoints:", (WhiteWinningPoints().eval(state, self.color) * 200))
+            print("BlackWinningPoints:", (BlackWinningPoints().eval(state, self.color) * -300))
+            print("WhiteCount:", (WhiteCount().eval(state, self.color) * 200))
+            print("BlackCount:", (BlackCount().eval(state, self.color) * -500))
+            print("NearKing:", (NearKing().eval(state, self.color) * -1000))
+            print("KingInWinningPosition:", (KingInWinningPosition().eval(state, self.color) * 10000))
+            print("KingPositioning:", (KingPositioning().eval(state, self.color) * 100))
+            print("BlackInGoodPosition:", (BlackInGoodPosition().eval(state, self.color) * -300))
             if self.color == state.turn:  # check if our turn or not
                 phase = ph.get_phase(turn)
-                action, value = parallel_search2.choose_action(3, state, TablutProblem(), self.timeout - 5, 3, True, given_phase=phase)
+                action, value = parallel_search2.choose_action(3, state, TablutProblem(), self.timeout - 5, 10, True, given_phase=phase)
                 self.send_string(action.to_server_format())  # send the action to the server
                 print("Eseguita azione:", action.to_server_format(), " con valore:", value)
             turn += 1
