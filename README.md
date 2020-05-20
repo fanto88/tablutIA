@@ -25,11 +25,17 @@ Second step is to actually clone the repository using:
 git clone https://github.com/fanto88/tablutIA
 ```
 
-### Installing Python 3.7
-Da completare
+### Dependencies
+Install pip
+```
+sudo apt install python3-pip
+```
 
-### Installing other library
-Da completare
+Install python libraries. In project root run:
+```
+python3 -m pip install -r requirements.txt
+```
+
 
 ### Download of the Server
 The server is made by AGalassi on github. You can find the repository and all the instruction needed here [Server](https://github.com/AGalassi/TablutCompetition)
