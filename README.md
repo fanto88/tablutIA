@@ -4,7 +4,7 @@
 
 # Artificial Intelligence for Tablut Board Game
 We created an Artificial Intelligence based on minimax alpha beta pruning algorithm to play a game called Tablut.
-The project was created to participate in a university competition.
+The project was created to participate in a university competition. Game is based on Ashton rules (http://ww.aagenielsen.dk/LinnaeusPaper-Longer.pdf)
 
 ## Prerequisites
 
