@@ -44,7 +44,7 @@ The server is made by AGalassi on github. You can find the repository and all th
 Now that you have all the components needed you can finally start the player. In order to do so start the server first,
 then go to the root of the cloned project and run this command:
 ```
-python3.7 UniWarsLAscesaDiChesani.py [-c color] [-t timeout] [-s ipAddress:port]
+python3 UniWarsLAscesaDiChesani.py [-c color] [-t timeout] [-s ipAddress:port]
 ```
 
 Where ``` -c -t -s ``` are not mandatory. If omitted, the default values ​​will be used
