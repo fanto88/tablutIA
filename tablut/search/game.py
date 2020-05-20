@@ -55,25 +55,10 @@ class TablutProblem(Game):
 
     def value(self, state, player):  # TODO: implement
         winner = state.winner
-        """if player == config.WHITE:
-            if not winner:
-                return 0
-            elif winner == player:
-                return -1000000
-            else:
-                return 1000000
-        else:
-            if not winner:
-                return 0
-            elif winner == player:
-                return 1000000
-            else:
-                return -1000000"""
 
         if not winner:
             value = 0
         elif winner == player:
-
             value = 1000000
         else:
             value = -1000000

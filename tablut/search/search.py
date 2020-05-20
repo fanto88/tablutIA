@@ -1,9 +1,10 @@
-import time
 import operator
+import time
+
+import tablut.search.heuristic as heuristic
+from tablut.search.game import Game
 from tablut.search.heuristic.strategies import random
 from tablut.search.tree import Node
-from tablut.search.game import Game
-import tablut.search.heuristic as heuristic
 
 
 class SearchAgent:
@@ -19,9 +20,6 @@ class SearchAgent:
 
         if checked_nodes:
             self.checked = checked_nodes
-
-        # TODO: DA ELIMINARE ASSOLUTAMENTE
-        self.h = random.RandomStrategy()
 
     def _best(self, actions_values, maximize):
         """Returns the first "action" in the given list,
@@ -68,26 +66,23 @@ class SearchAgent:
         # Utility value, for each state
         first = Node(state)
         first.depth = start_depth
-        eval_scores = [self._minimax(Node(st, first), problem, not maximize, player, float('-inf'), float('inf')) for st in states]
+        eval_scores = [self._minimax(Node(st, first), problem, not maximize, player, float('-inf'), float('inf')) for st
+                       in states]
 
         # Obtaining best action
         bestaction_bestvalue = self._best(list(filter(lambda x: x[1] not in (float('inf'), float('-inf')),
-                                                                             zip(actions, eval_scores))), maximize)
+                                                      zip(actions, eval_scores))), maximize)
         return bestaction_bestvalue
 
     def _already_checked(self, state):
-        #print("(stato, stati_computati):{}".format(state, self.checked))
         return state in self.checked
 
     def _already_checked_result(self, state):
         return self.checked[state]
 
     def _mark_checked(self, state):
-        self.checked[state] = 1    # values = (value of single state, action)
+        self.checked[state] = 1  # values = (value of single state, action)
 
-    # TODO: si può provare a ottimizzare l'algoritmo e non restituire per ogni stato (valore, azione) ma solo valore
-    # TODO: se fai quanto detto sopra, potresti togliere i nodi
-    # TODO: se trovi mossa vincente, esci subito
     def _minimax(self, node: Node, problem: Game, maximize, player, alpha, beta):
         # Ricerca termina se:
         #   -E' uno stato terminale
@@ -102,7 +97,6 @@ class SearchAgent:
             self._mark_checked(node.state)
             return values
 
-        # TODO: sposta il controllo sopra alle condizioni
         # Controlla se lo stato corrente è già stato elaborato
         if self._already_checked(node.state):
             self.node_skipped += 1
@@ -116,7 +110,7 @@ class SearchAgent:
         list_actions = self.possible_actions(node.state, problem)
         for action in list_actions:
             new_state = self.resulting_state(node.state, action, problem)
-            new_node = Node(new_state, node, action, node.path_cost+1)
+            new_node = Node(new_state, node, action, node.path_cost + 1)
             child_value = self._minimax(new_node, problem, not maximize, player, alpha, beta)
 
             if maximize and value < child_value:
@@ -144,14 +138,11 @@ class SearchAgent:
     def resulting_state(self, state, action, problem):
         return problem.process_action(state, action)
 
-    # TODO: modifica l'euristica che viene utilizzata
-    # TODO: elimina par. depth
     def utility(self, state, problem, player, depth):
         phase = self.phase
 
         return problem.value(state, player) if problem.goal_test(state) \
             else heuristic.eval(state, player, phase)
-            # else self.h.eval(state, player)
 
     def terminal_test(self, state, problem):
         return problem.goal_test(state)

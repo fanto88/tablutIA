@@ -1,4 +1,3 @@
-
 class Node:
     """A node in a search tree. Contains a pointer to the parent (the node
     that this is a successor of) and to the actual state for this node. Note
@@ -22,7 +21,7 @@ class Node:
     def __repr__(self):
         return "<Node {}>".format(self.state)
 
-    def expand(self, problem):  # TODO: restituisco array numpy anziché lista?
+    def expand(self, problem):
         """List the nodes reachable in one step from this node."""
         return [self.child_node(problem, action)
                 for action in problem.actions(self.state)]
@@ -55,4 +54,3 @@ class Node:
         # object itself to quickly search a node
         # with the same state in a Hash Table
         return hash(self.state)
-
